@@ -7,11 +7,13 @@
 		"sourceMap": true
 	},
 	"files": [
+		"EnumDictionary.ts",
 		"AnimationController.ts",
 		"Constants.ts",
 		"MyUtilities.ts",
 		"CaseNote.ts",
 		"TaskTicket.ts",
+		"TaskTicketCategoryHelper.ts",
 		"DataHelper.ts",
 		"MenuController.ts",
 		"Main.ts"

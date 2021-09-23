@@ -1,8 +1,10 @@
 sass support-scss/main.scss > files-generated/main.css
 cat support-typescript/Constants.ts \
+    support-typescript/EnumDictionary.ts \
     support-typescript/MyUtilities.ts \
     support-typescript/CaseNote.ts \
     support-typescript/TaskTicket.ts \
+    support-typescript/TaskTicketCategoryHelper.ts \
     support-typescript/DataHelper.ts \
     support-typescript/AnimationController.ts \
     support-typescript/MenuController.ts \

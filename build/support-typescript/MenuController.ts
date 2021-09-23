@@ -9,21 +9,42 @@ class MenuController {
 		$("#MainMenu_Neglected").html('<p class="TTMenuPanelHeading panel-heading">Neglected?</p>');
 		$("#MainMenu_Uncategorised").html('<p class="TTMenuPanelHeading panel-heading">Uncategorised</p>');
 		$("#MainMenu_DoneBeforeToday").html('<p class="TTMenuPanelHeading panel-heading">Done Before Today</p>');
+
+		// sort into buckets
+		let preparedBuckets = TaskTicketCategoryHelper.generateBuckets();
 		$.each(DataHelper.globalItems, function (index, value) {
 			let item = <TaskTicket>value;
-			let destination = TaskTicket.determineCategory(item);
+			
+			let destinationBucket = item.determineCategory();
+			preparedBuckets[destinationBucket].push(item);
+		});
 
-			let itemClasses = 'TTMenuItem panel-block';
-			if (item.completedTs) {
-				itemClasses += ' is-completed'
-			}
+		// generate
+		$.each(preparedBuckets, function(bucketID, bucketContents) {
+			// sort by name, then by completion
+			// Adapted from: https://flaviocopes.com/how-to-sort-array-of-objects-by-property-javascript/
+			// Adapted from: https://stackoverflow.com/questions/48195456/order-array-of-objects-with-typescript-by-value
+			let notDonePart = bucketContents.filter(obj => obj.completedTs == null);
+			let donePart = bucketContents.filter(obj => obj.completedTs != null);
+			notDonePart.sort((a, b) => (a.title > b.title ? 1 : -1));
+			donePart.sort((a, b) => (a.title > b.title ? 1 : -1));
+			bucketContents = notDonePart.concat(donePart);
 
-			let preparedHTML = ""
-				+ "<a class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
-				+ item.title
-				+ "</a>";
+			$.each(bucketContents, function(index, item) {
+				let destinationDom = TaskTicketCategoryHelper.enumToDomName(bucketID);
 
-			$("#MainMenu_" + destination).append(preparedHTML);
+				let itemClasses = 'TTMenuItem panel-block';
+				if (item.completedTs) {
+					itemClasses += ' is-completed'
+				}
+
+				let preparedHTML = ""
+					+ "<a class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
+					+ item.title
+					+ "</a>";
+
+				$("#MainMenu_" + destinationDom).append(preparedHTML);
+			});
 		});
 
 		// try to move to pre-saved location
@@ -36,10 +57,11 @@ class MenuController {
 			// 	$("#" + MENU_ITEM_PREFIX + possibleSavedItem.id),
 			// 	$("#LeftSide")
 			// );
-			let category = TaskTicket.determineCategory(possibleSavedItem);
-			console.log("category == " + category);
+			let category = possibleSavedItem.determineCategory();
+			let categoryString = TaskTicketCategoryHelper.enumToDomName(category);
+			console.log("categoryString == " + categoryString);
 			AnimationController.insideDivSmoothScrollWithParent(
-				$("#MainMenu_" + category),
+				$("#MainMenu_" + categoryString),
 				$("#LeftSide")
 			);
 		}

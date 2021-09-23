@@ -1,12 +1,3 @@
-enum TaskTicketCategory {
-	ASSORTED = "Uncategorised",
-	DONE_BEFORE_TODAY = "DoneBeforeToday",
-	OVERDUE = "Overdue",
-	NEGLECTED = "Neglected",
-	DUE_SOON = "DueSoon",
-	DUE_TODAY = "DueToday"
-}
-
 class TaskTicket {
 	id: string;
 	title: string;
@@ -16,6 +7,8 @@ class TaskTicket {
 	completedTs?: Date;
 	dueDate?: Date;
 
+	categories = ""
+
 	caseNotes: Array<CaseNote> = [];
 
 	constructor(title: string) {
@@ -24,23 +17,22 @@ class TaskTicket {
 		this.createTs = new Date();
 	}
 
-
-	public static determineCategory(item: TaskTicket): TaskTicketCategory {
+	public determineCategory(): TaskTicketCategory {
 		let preparedResponse = TaskTicketCategory.ASSORTED;
 
 		// figure out if NEGLECTED
-		let ticketAge = MyUtilities.daysBetween(item.createTs, new Date());
+		let ticketAge = MyUtilities.daysBetween(this.createTs, new Date());
 		if (ticketAge > 3) {
 			preparedResponse = TaskTicketCategory.NEGLECTED;
 		}
 
 		// figure out if urgent
-		if (item.dueDate) {
-			if (MyUtilities.isSameDay(new Date(), item.dueDate)) {
+		if (this.dueDate) {
+			if (MyUtilities.isSameDay(new Date(), this.dueDate)) {
 				preparedResponse = TaskTicketCategory.DUE_TODAY;
 			} else {
-				let daysLeft = MyUtilities.daysBetween(new Date(), item.dueDate);
-				console.log("daysLeft " + item.id + " = " + daysLeft);
+				let daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
+				console.log("daysLeft " + this.id + " = " + daysLeft);
 				if (daysLeft < 0) {
 					preparedResponse = TaskTicketCategory.OVERDUE;
 				} else if (daysLeft < 3) {
@@ -50,8 +42,8 @@ class TaskTicket {
 		}
 
 		// figure out if done before today
-		if (item.completedTs) {
-			if (MyUtilities.isBeforeToday(item.completedTs)) {
+		if (this.completedTs) {
+			if (MyUtilities.isBeforeToday(this.completedTs)) {
 				preparedResponse = TaskTicketCategory.DONE_BEFORE_TODAY;
 			}
 		}
