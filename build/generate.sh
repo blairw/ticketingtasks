@@ -4,6 +4,7 @@ cat support-typescript/Constants.ts \
     support-typescript/CaseNote.ts \
     support-typescript/TaskTicket.ts \
     support-typescript/DataHelper.ts \
+    support-typescript/AnimationController.ts \
     support-typescript/MenuController.ts \
     support-typescript/Main.ts \
     > files-generated/main.ts

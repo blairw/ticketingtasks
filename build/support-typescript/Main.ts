@@ -4,6 +4,9 @@ $(function () {
 	DataHelper.retrieveItemsFromLocalStorage();
 	MenuController.refreshMainMenu();
 
+	// Enable this if you need animated #anchor links
+	// AnimationController.smoothScrollLinks();
+
 	$("#NewTaskButton").on("click", function () {
 		let newTaskTitle = $("#NewTaskText").val().toString();
 

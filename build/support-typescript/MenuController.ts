@@ -3,42 +3,15 @@ class MenuController {
 	 * Populates the menu when the app is started.
 	 */
 	public static refreshMainMenu() {
+		$("#MainMenu_Overdue").html('<p class="TTMenuPanelHeading panel-heading">Overdue</p>');
 		$("#MainMenu_DueToday").html('<p class="TTMenuPanelHeading panel-heading">Due Today</p>');
 		$("#MainMenu_DueSoon").html('<p class="TTMenuPanelHeading panel-heading">Due Soon</p>');
 		$("#MainMenu_Neglected").html('<p class="TTMenuPanelHeading panel-heading">Neglected?</p>');
 		$("#MainMenu_Uncategorised").html('<p class="TTMenuPanelHeading panel-heading">Uncategorised</p>');
 		$("#MainMenu_DoneBeforeToday").html('<p class="TTMenuPanelHeading panel-heading">Done Before Today</p>');
 		$.each(DataHelper.globalItems, function (index, value) {
-			let destination = "Uncategorised";
-
 			let item = <TaskTicket>value;
-
-
-			// figure out if neglected
-			let ticketAge = MyUtilities.daysBetween(item.createTs, new Date());
-			if (ticketAge > 3) {
-				destination = "Neglected";
-			}
-
-			// figure out if urgent
-			if (item.dueDate) {
-				if (MyUtilities.isSameDay(new Date(), item.dueDate)) {
-					destination = "DueToday";
-				} else {
-					let daysLeft = MyUtilities.daysBetween(new Date(), item.dueDate);
-					console.log("daysLeft " + item.id + " = " + daysLeft);
-					if (daysLeft < 3) {
-						destination = "DueSoon";
-					}
-				}
-			}
-
-			// figure out if done before today
-			if (item.completedTs) {
-				if (MyUtilities.isBeforeToday(item.completedTs)) {
-					destination = "DoneBeforeToday";
-				}
-			}
+			let destination = TaskTicket.determineCategory(item);
 
 			let itemClasses = 'TTMenuItem panel-block';
 			if (item.completedTs) {
@@ -59,6 +32,16 @@ class MenuController {
 			// nothing was saved
 		} else {
 			MenuController.moveToMenuItemByID(possibleSavedItem.id);
+			// AnimationController.insideDivSmoothScrollWithParent(
+			// 	$("#" + MENU_ITEM_PREFIX + possibleSavedItem.id),
+			// 	$("#LeftSide")
+			// );
+			let category = TaskTicket.determineCategory(possibleSavedItem);
+			console.log("category == " + category);
+			AnimationController.insideDivSmoothScrollWithParent(
+				$("#MainMenu_" + category),
+				$("#LeftSide")
+			);
 		}
 
 		MenuController.attachMenuItemHandlers();

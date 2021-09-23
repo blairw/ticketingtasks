@@ -10458,6 +10458,15 @@ var CaseNote = /** @class */ (function () {
     }
     return CaseNote;
 }());
+var TaskTicketCategory;
+(function (TaskTicketCategory) {
+    TaskTicketCategory["ASSORTED"] = "Uncategorised";
+    TaskTicketCategory["DONE_BEFORE_TODAY"] = "DoneBeforeToday";
+    TaskTicketCategory["OVERDUE"] = "Overdue";
+    TaskTicketCategory["NEGLECTED"] = "Neglected";
+    TaskTicketCategory["DUE_SOON"] = "DueSoon";
+    TaskTicketCategory["DUE_TODAY"] = "DueToday";
+})(TaskTicketCategory || (TaskTicketCategory = {}));
 var TaskTicket = /** @class */ (function () {
     function TaskTicket(title) {
         this.caseNotes = [];
@@ -10465,6 +10474,37 @@ var TaskTicket = /** @class */ (function () {
         this.title = title;
         this.createTs = new Date();
     }
+    TaskTicket.determineCategory = function (item) {
+        var preparedResponse = TaskTicketCategory.ASSORTED;
+        // figure out if NEGLECTED
+        var ticketAge = MyUtilities.daysBetween(item.createTs, new Date());
+        if (ticketAge > 3) {
+            preparedResponse = TaskTicketCategory.NEGLECTED;
+        }
+        // figure out if urgent
+        if (item.dueDate) {
+            if (MyUtilities.isSameDay(new Date(), item.dueDate)) {
+                preparedResponse = TaskTicketCategory.DUE_TODAY;
+            }
+            else {
+                var daysLeft = MyUtilities.daysBetween(new Date(), item.dueDate);
+                console.log("daysLeft " + item.id + " = " + daysLeft);
+                if (daysLeft < 0) {
+                    preparedResponse = TaskTicketCategory.OVERDUE;
+                }
+                else if (daysLeft < 3) {
+                    preparedResponse = TaskTicketCategory.DUE_SOON;
+                }
+            }
+        }
+        // figure out if done before today
+        if (item.completedTs) {
+            if (MyUtilities.isBeforeToday(item.completedTs)) {
+                preparedResponse = TaskTicketCategory.DONE_BEFORE_TODAY;
+            }
+        }
+        return preparedResponse;
+    };
     return TaskTicket;
 }());
 var DataHelper = /** @class */ (function () {
@@ -10531,6 +10571,91 @@ var DataHelper = /** @class */ (function () {
     DataHelper.globalItems = {};
     return DataHelper;
 }());
+var BoundingBox = /** @class */ (function () {
+    function BoundingBox() {
+    }
+    return BoundingBox;
+}());
+var AnimationController = /** @class */ (function () {
+    function AnimationController() {
+    }
+    AnimationController.easeInOutQuad = function (t) { return t < .5 ? 2 * t * t : -1 + (4 - 2 * t) * t; };
+    ;
+    AnimationController.getRelativePos = function (elm) {
+        // to account for the height of sticky top bar and then some
+        var INSIDE_DIV_SMOOTH_SCROLLING_OFFSET = 10;
+        var pPos = elm.parentNode.getBoundingClientRect(), // parent pos
+        cPos = elm.getBoundingClientRect(), // target pos
+        pos = new BoundingBox();
+        pos.top = cPos.top - pPos.top + elm.parentNode.scrollTop - INSIDE_DIV_SMOOTH_SCROLLING_OFFSET,
+            pos.right = cPos.right - pPos.right,
+            pos.bottom = cPos.bottom - pPos.bottom,
+            pos.left = cPos.left - pPos.left;
+        return pos;
+    };
+    AnimationController.scrollTo = function (element, to, duration) {
+        var start = element.scrollTop, change = to - start, startTime = performance.now(), val, now, elapsed, t;
+        function animateScroll() {
+            now = performance.now();
+            elapsed = (now - startTime) / 1000;
+            t = (elapsed / duration);
+            element.scrollTop = start + change * AnimationController.easeInOutQuad(t);
+            if (t < 1) {
+                window.requestAnimationFrame(animateScroll);
+            }
+        }
+        ;
+        animateScroll();
+    };
+    AnimationController.scrollToElm = function (container, elm, duration) {
+        var pos = AnimationController.getRelativePos(elm);
+        AnimationController.scrollTo(container, pos.top, duration);
+        console.log("scrollToElm pos.top = " + pos.top);
+    };
+    // SOURCE: https://stackoverflow.com/questions/635706/how-to-scroll-to-an-element-inside-a-div
+    AnimationController.insideDivSmoothScroll = function (target) {
+        AnimationController.insideDivSmoothScrollWithParent(target, target.parent());
+    };
+    AnimationController.insideDivSmoothScrollWithParent = function (target, parent) {
+        var parentID = target.parent().attr("id");
+        var targetID = target.attr("id");
+        var parentSelector = document.querySelector("#" + parentID);
+        var targetSelector = document.querySelector("#" + targetID);
+        var durationInSeconds = 0.5;
+        AnimationController.scrollToElm(parentSelector, targetSelector, durationInSeconds);
+    };
+    // source: https://css-tricks.com/snippets/jquery/smooth-scrolling/
+    AnimationController.smoothScrollLinks = function () {
+        // Select all links with hashes
+        $('a[href*="#"]')
+            // Remove links that don't actually link to anything
+            .not('[href="#"]')
+            .not('[href="#0"]')
+            .on("click", function (event) {
+            var hae = this;
+            // On-page links
+            if (location.pathname.replace(/^\//, '') == hae.pathname.replace(/^\//, '') &&
+                location.hostname == hae.hostname) {
+                // Figure out element to scroll to
+                var target = $(hae.hash);
+                target = target.length ? target : $('[name=' + hae.hash.slice(1) + ']');
+                // Does a scroll target exist?
+                if (target.length) {
+                    // Only prevent default if animation is actually gonna happen
+                    event.preventDefault();
+                    // BLAIR: replaced default code with `insideDivSmoothScrolling.js` version
+                    // $('html, body').animate({
+                    // 	scrollTop: target.offset().top
+                    // }, 500, function() {
+                    // 	// Callback after animation
+                    // });
+                    AnimationController.insideDivSmoothScroll($(target));
+                }
+            }
+        });
+    };
+    return AnimationController;
+}());
 var MenuController = /** @class */ (function () {
     function MenuController() {
     }
@@ -10538,38 +10663,15 @@ var MenuController = /** @class */ (function () {
      * Populates the menu when the app is started.
      */
     MenuController.refreshMainMenu = function () {
+        $("#MainMenu_Overdue").html('<p class="TTMenuPanelHeading panel-heading">Overdue</p>');
         $("#MainMenu_DueToday").html('<p class="TTMenuPanelHeading panel-heading">Due Today</p>');
         $("#MainMenu_DueSoon").html('<p class="TTMenuPanelHeading panel-heading">Due Soon</p>');
         $("#MainMenu_Neglected").html('<p class="TTMenuPanelHeading panel-heading">Neglected?</p>');
         $("#MainMenu_Uncategorised").html('<p class="TTMenuPanelHeading panel-heading">Uncategorised</p>');
         $("#MainMenu_DoneBeforeToday").html('<p class="TTMenuPanelHeading panel-heading">Done Before Today</p>');
         $.each(DataHelper.globalItems, function (index, value) {
-            var destination = "Uncategorised";
             var item = value;
-            // figure out if neglected
-            var ticketAge = MyUtilities.daysBetween(item.createTs, new Date());
-            if (ticketAge > 3) {
-                destination = "Neglected";
-            }
-            // figure out if urgent
-            if (item.dueDate) {
-                if (MyUtilities.isSameDay(new Date(), item.dueDate)) {
-                    destination = "DueToday";
-                }
-                else {
-                    var daysLeft = MyUtilities.daysBetween(new Date(), item.dueDate);
-                    console.log("daysLeft " + item.id + " = " + daysLeft);
-                    if (daysLeft < 3) {
-                        destination = "DueSoon";
-                    }
-                }
-            }
-            // figure out if done before today
-            if (item.completedTs) {
-                if (MyUtilities.isBeforeToday(item.completedTs)) {
-                    destination = "DoneBeforeToday";
-                }
-            }
+            var destination = TaskTicket.determineCategory(item);
             var itemClasses = 'TTMenuItem panel-block';
             if (item.completedTs) {
                 itemClasses += ' is-completed';
@@ -10587,6 +10689,13 @@ var MenuController = /** @class */ (function () {
         }
         else {
             MenuController.moveToMenuItemByID(possibleSavedItem.id);
+            // AnimationController.insideDivSmoothScrollWithParent(
+            // 	$("#" + MENU_ITEM_PREFIX + possibleSavedItem.id),
+            // 	$("#LeftSide")
+            // );
+            var category = TaskTicket.determineCategory(possibleSavedItem);
+            console.log("category == " + category);
+            AnimationController.insideDivSmoothScrollWithParent($("#MainMenu_" + category), $("#LeftSide"));
         }
         MenuController.attachMenuItemHandlers();
     };
@@ -10625,6 +10734,8 @@ var MenuController = /** @class */ (function () {
 $(function () {
     DataHelper.retrieveItemsFromLocalStorage();
     MenuController.refreshMainMenu();
+    // Enable this if you need animated #anchor links
+    // AnimationController.smoothScrollLinks();
     $("#NewTaskButton").on("click", function () {
         var newTaskTitle = $("#NewTaskText").val().toString();
         var tt = new TaskTicket(newTaskTitle);
@@ -10666,6 +10777,7 @@ $(function () {
 						<button id="NewTaskButton" class="button is-link is-disabled">New task</button>
 					</div>
 				</div>
+				<nav class="panel is-danger" id="MainMenu_Overdue"></nav>
 				<nav class="panel" id="MainMenu_DueToday"></nav>
 				<nav class="panel" id="MainMenu_DueSoon"></nav>
 				<nav class="panel" id="MainMenu_Neglected"></nav>
