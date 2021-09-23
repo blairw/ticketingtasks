@@ -15,7 +15,8 @@
 		"TaskTicket.ts",
 		"TaskTicketCategoryHelper.ts",
 		"DataHelper.ts",
-		"MenuController.ts",
+		"LHSMenuController.ts",
+		"RHSContentController.ts",
 		"Main.ts"
 	]
 }

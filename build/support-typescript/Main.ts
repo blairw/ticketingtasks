@@ -2,7 +2,7 @@
 
 $(function () {
 	DataHelper.retrieveItemsFromLocalStorage();
-	MenuController.refreshMainMenu();
+	LHSMenuController.refreshMainMenu();
 
 	// Enable this if you need animated #anchor links
 	// AnimationController.smoothScrollLinks();
@@ -14,7 +14,7 @@ $(function () {
 		DataHelper.addNewItem(tt);
 		$("#NewTaskText").val("");
 
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 	});
 
 	$("#NewTaskText").on("keyup", function () {

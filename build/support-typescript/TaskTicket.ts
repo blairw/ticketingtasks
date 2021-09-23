@@ -22,23 +22,23 @@ class TaskTicket {
 		this.completedTs = new Date();
 
 		DataHelper.saveItemsToLocalStorage();
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 	}
 
 	public setExternalId(externalId: string) {
 		this.externalId = externalId;
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 
 		DataHelper.saveItemsToLocalStorage();
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 	}
 
 	public setDelegation(delegation: string) {
 		this.delegation = delegation;
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 
 		DataHelper.saveItemsToLocalStorage();
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 	}
 
 	public addCaseNote(title: string) {
@@ -49,7 +49,7 @@ class TaskTicket {
 		this.caseNotes.push(cn);
 
 		DataHelper.saveItemsToLocalStorage();
-		MenuController.refreshMainMenu();
+		LHSMenuController.refreshMainMenu();
 	}
 
 	public determineCategory(): TaskTicketCategory {

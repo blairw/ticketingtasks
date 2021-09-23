@@ -48,7 +48,6 @@ class AnimationController {
 	public static scrollToElm(container: any, elm: any, duration: number) {
 		let pos:BoundingBox = AnimationController.getRelativePos(elm);
 		AnimationController.scrollTo(container, pos.top, duration);
-		console.log("scrollToElm pos.top = " + pos.top);
 	}
 
 	// SOURCE: https://stackoverflow.com/questions/635706/how-to-scroll-to-an-element-inside-a-div

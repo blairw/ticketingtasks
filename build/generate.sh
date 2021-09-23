@@ -7,7 +7,8 @@ cat support-typescript/Constants.ts \
     support-typescript/TaskTicketCategoryHelper.ts \
     support-typescript/DataHelper.ts \
     support-typescript/AnimationController.ts \
-    support-typescript/MenuController.ts \
+    support-typescript/LHSMenuController.ts \
+    support-typescript/RHSContentController.ts \
     support-typescript/Main.ts \
     > files-generated/main.ts
 tsc files-generated/main.ts
