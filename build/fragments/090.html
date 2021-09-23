@@ -1,0 +1,48 @@
+</head>
+
+<body>
+	<div id="MainContainer">
+		<div id="DocumentHeading" class="level">
+			<div class="level-left">
+				<div>
+					<div id="DocumentHeadingText">
+						ticketingtasks
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="MasterDetailView" class="columns">
+			<div id="LeftSide" class="column is-one-third">
+				<div class="field is-grouped">
+					<div class="control">
+						<input id="NewTaskText" class="input" type="text" placeholder="Text input">
+					</div>
+					<div class="control">
+						<button id="NewTaskButton" class="button is-link is-disabled">New task</button>
+					</div>
+				</div>
+				<nav class="panel" id="MainMenu_DueToday"></nav>
+				<nav class="panel" id="MainMenu_DueSoon"></nav>
+				<nav class="panel" id="MainMenu_Neglected"></nav>
+				<nav class="panel" id="MainMenu_Uncategorised"></nav>
+				<nav class="panel" id="MainMenu_DoneBeforeToday"></nav>
+			</div>
+			<div id="RightSide" class="column content">
+				<h2 id="RHSTaskTitle"></h2>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Property</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody id="RHSTaskDetails">
+
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

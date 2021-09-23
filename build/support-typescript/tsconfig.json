@@ -1,0 +1,18 @@
+// we don't use this file for much, just to get VSC to calm down by ignoring all .js files and only inspecting .ts files...
+{
+	"compilerOptions": {
+		"noImplicitAny": true,
+		"removeComments": true,
+		"preserveConstEnums": true,
+		"sourceMap": true
+	},
+	"files": [
+		"Constants.ts",
+		"MyUtilities.ts",
+		"CaseNote.ts",
+		"TaskTicket.ts",
+		"DataHelper.ts",
+		"MenuController.ts",
+		"Main.ts"
+	]
+}

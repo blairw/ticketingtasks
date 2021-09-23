@@ -1,0 +1,1 @@
+let MENU_ITEM_PREFIX = "MenuItem_for_";

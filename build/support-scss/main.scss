@@ -1,0 +1,47 @@
+@charset "utf-8";
+
+// quick settings ...
+$PAGE_WIDTH: 1200px;
+
+// basics
+@import "base/forceScrollbar.scss";
+
+$blue: #336fcc;
+$family-sans-serif: "Verdana", sans-serif;
+
+// bulma
+@import "../node_modules/bulma/bulma.sass";
+
+// OK, our own stuff here...
+@import "components/basics.scss";
+@import "components/isDisabled.scss";
+@import "layout/masterDetail.scss";
+
+.TTMenuPanelHeading {
+	font-size: 10pt;
+}
+
+.TTMenuItem.is-active,
+.TTMenuItem.is-active:hover {
+	color: white;
+	background-color: $blue;
+}
+
+.TTMenuItem {
+	font-size: 10pt;
+}
+
+.TTMenuItem.is-completed,
+.TTMenuItem.is-completed:hover:not(.is-active) {
+	color: lightgray;
+	text-decoration: line-through;
+}
+
+#RHSTaskDetails {
+	font-size: 10pt;
+}
+
+.TTMenuItemWrapper {
+	border-top: lightgray !important;
+	border-bottom: lightgray !important;
+}

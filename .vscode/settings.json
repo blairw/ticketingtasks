@@ -1,0 +1,6 @@
+{
+    "search.exclude": {
+        "output/": true,
+        "files-generated/": true
+    }
+}

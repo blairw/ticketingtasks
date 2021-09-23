@@ -1,0 +1,5 @@
+// https://github.com/jgthms/bulma/issues/1006
+.is-disabled {
+	pointer-events: none;
+	opacity: .65;
+}

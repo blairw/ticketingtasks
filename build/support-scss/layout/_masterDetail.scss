@@ -1,0 +1,27 @@
+#MainContainer {
+	margin: 0 auto;
+	background-color: white;
+	height: 100vh;
+	overflow-y: clip;
+	width: 100vw;
+	max-width: $PAGE_WIDTH;
+}
+
+#DocumentHeading,
+#MasterDetailView {
+	margin: 0 auto;
+}
+
+#DocumentHeading {
+	padding: 1rem;
+	width: 100%;
+	background-color: black;
+	color: white;
+	font-weight: bold;
+}
+
+#LeftSide,
+#RightSide {
+	overflow-y: scroll;
+	height: calc(100vh - 60px);
+}
