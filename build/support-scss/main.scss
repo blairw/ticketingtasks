@@ -7,7 +7,7 @@ $PAGE_WIDTH: 1200px;
 @import "base/forceScrollbar.scss";
 
 $blue: #336fcc;
-$family-sans-serif: "Verdana", sans-serif;
+$family-sans-serif: "Lucida Grande", sans-serif;
 
 // bulma
 @import "../node_modules/bulma/bulma.sass";
@@ -15,6 +15,7 @@ $family-sans-serif: "Verdana", sans-serif;
 // OK, our own stuff here...
 @import "components/basics.scss";
 @import "components/isDisabled.scss";
+@import "components/caseNote.scss";
 @import "layout/masterDetail.scss";
 
 .TTMenuPanelHeading {

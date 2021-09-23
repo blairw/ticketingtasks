@@ -1,6 +1,9 @@
 class CaseNote {
 	id: string;
-	title?: string;
+	title: string;
 	createTs: Date;
-	owner: TaskTicket;
+
+	constructor(title: string) {
+		this.title = title;
+	}
 }

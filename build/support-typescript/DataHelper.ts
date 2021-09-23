@@ -66,8 +66,22 @@ class DataHelper {
 				if (value["note"]) {
 					tt.note = value["note"];
 				}
+				if (value["externalId"]) {
+					tt.externalId = value["externalId"];
+				}
+				if (value["delegation"]) {
+					tt.delegation = value["delegation"];
+				}
 				
-				// TODO: casenotes
+				if (value["caseNotes"]) {
+					$.each(value["caseNotes"], function(index, caseNote) {
+						let cn = new CaseNote(caseNote['title']);
+						cn.id = caseNote['id'];
+						cn.createTs = new Date(caseNote['createTs']);
+
+						tt.caseNotes.push(cn);
+					});
+				}
 
 				DataHelper.globalItems[tt.id] = tt;
 			});

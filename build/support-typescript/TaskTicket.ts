@@ -3,6 +3,9 @@ class TaskTicket {
 	title: string;
 	note: string;
 
+	externalId?: string;
+	delegation?: string;
+
 	createTs: Date;
 	completedTs?: Date;
 	dueDate?: Date;
@@ -17,6 +20,35 @@ class TaskTicket {
 
 	public setCompleted() {
 		this.completedTs = new Date();
+
+		DataHelper.saveItemsToLocalStorage();
+		MenuController.refreshMainMenu();
+	}
+
+	public setExternalId(externalId: string) {
+		this.externalId = externalId;
+		MenuController.refreshMainMenu();
+
+		DataHelper.saveItemsToLocalStorage();
+		MenuController.refreshMainMenu();
+	}
+
+	public setDelegation(delegation: string) {
+		this.delegation = delegation;
+		MenuController.refreshMainMenu();
+
+		DataHelper.saveItemsToLocalStorage();
+		MenuController.refreshMainMenu();
+	}
+
+	public addCaseNote(title: string) {
+		let cn = new CaseNote(title);
+		cn.createTs = new Date();
+		cn.id = MyUtilities.generateUUID();
+
+		this.caseNotes.push(cn);
+
+		DataHelper.saveItemsToLocalStorage();
 		MenuController.refreshMainMenu();
 	}
 
