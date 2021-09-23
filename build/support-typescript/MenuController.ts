@@ -39,7 +39,7 @@ class MenuController {
 				}
 
 				let preparedHTML = ""
-					+ "<a class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
+					+ "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
 					+ item.title
 					+ "</a>";
 
@@ -65,7 +65,8 @@ class MenuController {
 				$("#LeftSide")
 			);
 		}
-
+		
+		$(".TTMenuItem").fadeIn("fast");
 		MenuController.attachMenuItemHandlers();
 	}
 

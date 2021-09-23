@@ -39,7 +39,7 @@ DataHelper.globalCurrentSelectedItem.dueDate = new Date("2021-09-24");
 Set the current ticket to be completed:
 
 ```js
-DataHelper.globalCurrentSelectedItem.completedTs = new Date();
+DataHelper.globalCurrentSelectedItem.setCompleted();
 ```
 
 To make changes persistent, save changes to LocalStorage:

@@ -7,14 +7,17 @@ class TaskTicket {
 	completedTs?: Date;
 	dueDate?: Date;
 
-	categories = ""
-
 	caseNotes: Array<CaseNote> = [];
 
 	constructor(title: string) {
 		this.id = MyUtilities.generateUUID();
 		this.title = title;
 		this.createTs = new Date();
+	}
+
+	public setCompleted() {
+		this.completedTs = new Date();
+		MenuController.refreshMainMenu();
 	}
 
 	public determineCategory(): TaskTicketCategory {
