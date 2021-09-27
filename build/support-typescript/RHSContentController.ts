@@ -1,4 +1,29 @@
 class RHSContentController {
+	public static generateTableRow(label: string, value: any): string {
+		let classes = "";
+		if (label == "ID") {
+			classes += " is-family-monospace";
+		}
+		
+		if (value instanceof Date) {
+			value = MyUtilities.getPreferredLocalString(value);
+			classes += " is-family-monospace";
+		}
+
+		let preparedHTML = "<tr>";
+		preparedHTML += "<td>" + label + "</td>";
+		
+		if (null == value) {
+			preparedHTML += "<td class='" + classes + " has-text-grey-light'>N/A</td>";
+		} else {
+			preparedHTML += "<td class='" + classes + "'>" + value + "</td>";
+		}
+		
+		preparedHTML += "</tr>";
+
+		return preparedHTML;
+	}
+
     public static moveToMenuItemByID(selectedID: string) {
 
 		$(".TTMenuItem").removeClass("is-active");
@@ -17,20 +42,24 @@ class RHSContentController {
 
 		$("#RHSTaskTitle").html(tt.title);
 		$("#RHSTaskDetails").html("");
-		$("#RHSTaskDetails").append("<tr><td>ID</td><td><code>" + tt.id + "</code></td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>External ID</td><td>" + tt.externalId + "</td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>Title</td><td>" + tt.title + "</td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>Created</td><td>" + tt.createTs + "</td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>Due</td><td>" + tt.dueDate + "</td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>Completed</td><td>" + tt.completedTs + "</td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>Delegation</td><td>" + tt.delegation + "</td></tr>");
-		$("#RHSTaskDetails").append("<tr><td>Note</td><td>" + tt.note + "</td></tr>");
+		$.each({
+			"ID": tt.id,
+			"External ID": tt.externalId,
+			"Title": tt.title,
+			"Created": tt.createTs,
+			"Due": tt.dueDate,
+			"Completed": tt.completedTs,
+			"Delegation": tt.delegation,
+			"Note": tt.note,
+		}, function(index, value) {
+			$("#RHSTaskDetails").append(RHSContentController.generateTableRow(index, value))
+		});
 
 		$("#RHSCaseNotes").html("");
 		tt.caseNotes = tt.caseNotes.sort((a, b) => (a.createTs > b.createTs ? -1 : 1))
 		$.each(tt.caseNotes, function(index, caseNote) {
 			let preparedCaseNoteHTML = "<div class='panel CaseNotePanel'>";
-			preparedCaseNoteHTML += "<div class='CaseNoteTimestamp'>" + caseNote.createTs + "</div>";
+			preparedCaseNoteHTML += "<div class='CaseNoteTimestamp is-family-monospace'>" + MyUtilities.getPreferredLocalString(caseNote.createTs) + "</div>";
 			preparedCaseNoteHTML += "<p>" + caseNote.title + "</p>";
 			preparedCaseNoteHTML += "</div>";
 

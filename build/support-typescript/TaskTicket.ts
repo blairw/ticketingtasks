@@ -70,7 +70,7 @@ class TaskTicket {
 				console.log("daysLeft " + this.id + " = " + daysLeft);
 				if (daysLeft < 0) {
 					preparedResponse = TaskTicketCategory.OVERDUE;
-				} else if (daysLeft < 3) {
+				} else if (daysLeft < 5) {
 					preparedResponse = TaskTicketCategory.DUE_SOON;
 				}
 			}
