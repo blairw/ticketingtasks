@@ -68,6 +68,6 @@ class RHSContentController {
 
 		DataHelper.globalCurrentSelectedItem = tt;
 		DataHelper.saveSelectedItemToLocalStorage();
-		console.log(tt.id);
+		$("#NewCaseNoteTextArea").trigger("focus");
 	}
 }

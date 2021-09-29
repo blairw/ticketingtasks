@@ -9,6 +9,7 @@ class TaskTicket {
 	createTs: Date;
 	completedTs?: Date;
 	dueDate?: Date;
+	isStarred = false;
 
 	caseNotes: Array<CaseNote> = [];
 
@@ -18,34 +19,46 @@ class TaskTicket {
 		this.createTs = new Date();
 	}
 
+	public toggleStar() {
+		this.isStarred = !this.isStarred;
+
+		LHSMenuController.saveDataAndRefreshMenu();
+	}
+
+	public toggleCompletion() {
+		if (this.completedTs) {
+			this.completedTs = null;
+		} else {
+			this.setCompleted();
+		}
+
+		LHSMenuController.saveDataAndRefreshMenu();
+	}
+
 	public setDueDate(dateString: string) {
 		this.dueDate = new Date(dateString);
 		
-		DataHelper.saveItemsToLocalStorage();
-		LHSMenuController.refreshMainMenu();
+		LHSMenuController.saveDataAndRefreshMenu();
 	}
 
 	public setCompleted() {
 		this.completedTs = new Date();
 
-		DataHelper.saveItemsToLocalStorage();
-		LHSMenuController.refreshMainMenu();
+		LHSMenuController.saveDataAndRefreshMenu();
 	}
 
 	public setExternalId(externalId: string) {
 		this.externalId = externalId;
 		LHSMenuController.refreshMainMenu();
 
-		DataHelper.saveItemsToLocalStorage();
-		LHSMenuController.refreshMainMenu();
+		LHSMenuController.saveDataAndRefreshMenu();
 	}
 
 	public setDelegation(delegation: string) {
 		this.delegation = delegation;
 		LHSMenuController.refreshMainMenu();
 
-		DataHelper.saveItemsToLocalStorage();
-		LHSMenuController.refreshMainMenu();
+		LHSMenuController.saveDataAndRefreshMenu();
 	}
 
 	public addCaseNote(title: string) {
@@ -55,8 +68,7 @@ class TaskTicket {
 
 		this.caseNotes.push(cn);
 
-		DataHelper.saveItemsToLocalStorage();
-		LHSMenuController.refreshMainMenu();
+		LHSMenuController.saveDataAndRefreshMenu();
 	}
 
 	public determineCategory(): TaskTicketCategory {
@@ -74,7 +86,7 @@ class TaskTicket {
 				preparedResponse = TaskTicketCategory.DUE_TODAY;
 			} else {
 				let daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
-				console.log("daysLeft " + this.id + " = " + daysLeft);
+				// console.log("daysLeft " + this.id + " = " + daysLeft);
 				if (daysLeft < 0) {
 					preparedResponse = TaskTicketCategory.OVERDUE;
 				} else if (daysLeft < 5) {

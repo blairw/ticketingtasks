@@ -33,14 +33,19 @@ class LHSMenuController {
 			$.each(bucketContents, function(index, item) {
 				let destinationDom = TaskTicketCategoryHelper.enumToDomName(bucketID);
 
-				let itemClasses = 'TTMenuItem panel-block';
+				// Adapted from: https://stackoverflow.com/questions/61627784/right-align-text-in-bulma-panel-block
+				let itemClasses = 'TTMenuItem panel-block is-justify-content-space-between';
 				if (item.completedTs) {
 					itemClasses += ' is-completed'
+				}
+				if (item.isStarred) {
+					itemClasses += ' has-text-weight-bold'
 				}
 
 				let preparedHTML = ""
 					+ "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
 					+ item.title
+					+ (item.isStarred ? "<div class='is-pulled-right'>⭐️</div>" : "")
 					+ "</a>";
 
 				$("#MainMenu_" + destinationDom).append(preparedHTML);
@@ -75,6 +80,11 @@ class LHSMenuController {
 
 			RHSContentController.moveToMenuItemByID(selectedID);
 		});
+	}
+
+	public static saveDataAndRefreshMenu() {
+		DataHelper.saveItemsToLocalStorage();
+		LHSMenuController.refreshMainMenu();
 	}
 
 }

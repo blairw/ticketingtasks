@@ -10494,40 +10494,49 @@ var CaseNote = /** @class */ (function () {
 }());
 var TaskTicket = /** @class */ (function () {
     function TaskTicket(title) {
+        this.isStarred = false;
         this.caseNotes = [];
         this.id = MyUtilities.generateUUID();
         this.title = title;
         this.createTs = new Date();
     }
+    TaskTicket.prototype.toggleStar = function () {
+        this.isStarred = !this.isStarred;
+        LHSMenuController.saveDataAndRefreshMenu();
+    };
+    TaskTicket.prototype.toggleCompletion = function () {
+        if (this.completedTs) {
+            this.completedTs = null;
+        }
+        else {
+            this.setCompleted();
+        }
+        LHSMenuController.saveDataAndRefreshMenu();
+    };
     TaskTicket.prototype.setDueDate = function (dateString) {
         this.dueDate = new Date(dateString);
-        DataHelper.saveItemsToLocalStorage();
-        LHSMenuController.refreshMainMenu();
+        LHSMenuController.saveDataAndRefreshMenu();
     };
     TaskTicket.prototype.setCompleted = function () {
         this.completedTs = new Date();
-        DataHelper.saveItemsToLocalStorage();
-        LHSMenuController.refreshMainMenu();
+        LHSMenuController.saveDataAndRefreshMenu();
     };
     TaskTicket.prototype.setExternalId = function (externalId) {
         this.externalId = externalId;
         LHSMenuController.refreshMainMenu();
-        DataHelper.saveItemsToLocalStorage();
-        LHSMenuController.refreshMainMenu();
+        LHSMenuController.saveDataAndRefreshMenu();
     };
     TaskTicket.prototype.setDelegation = function (delegation) {
         this.delegation = delegation;
         LHSMenuController.refreshMainMenu();
-        DataHelper.saveItemsToLocalStorage();
-        LHSMenuController.refreshMainMenu();
+        LHSMenuController.saveDataAndRefreshMenu();
     };
     TaskTicket.prototype.addCaseNote = function (title) {
         var cn = new CaseNote(title);
         cn.createTs = new Date();
         cn.id = MyUtilities.generateUUID();
         this.caseNotes.push(cn);
-        DataHelper.saveItemsToLocalStorage();
-        LHSMenuController.refreshMainMenu();
+        LHSMenuController.saveDataAndRefreshMenu();
     };
     TaskTicket.prototype.determineCategory = function () {
         var preparedResponse = TaskTicketCategory.ASSORTED;
@@ -10543,7 +10552,7 @@ var TaskTicket = /** @class */ (function () {
             }
             else {
                 var daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
-                console.log("daysLeft " + this.id + " = " + daysLeft);
+                // console.log("daysLeft " + this.id + " = " + daysLeft);
                 if (daysLeft < 0) {
                     preparedResponse = TaskTicketCategory.OVERDUE;
                 }
@@ -10790,13 +10799,18 @@ var LHSMenuController = /** @class */ (function () {
             bucketContents = notDonePart.concat(donePart);
             $.each(bucketContents, function (index, item) {
                 var destinationDom = TaskTicketCategoryHelper.enumToDomName(bucketID);
-                var itemClasses = 'TTMenuItem panel-block';
+                // Adapted from: https://stackoverflow.com/questions/61627784/right-align-text-in-bulma-panel-block
+                var itemClasses = 'TTMenuItem panel-block is-justify-content-space-between';
                 if (item.completedTs) {
                     itemClasses += ' is-completed';
+                }
+                if (item.isStarred) {
+                    itemClasses += ' has-text-weight-bold';
                 }
                 var preparedHTML = ""
                     + "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
                     + item.title
+                    + (item.isStarred ? "<div class='is-pulled-right'>⭐️</div>" : "")
                     + "</a>";
                 $("#MainMenu_" + destinationDom).append(preparedHTML);
             });
@@ -10824,6 +10838,10 @@ var LHSMenuController = /** @class */ (function () {
             var selectedID = $(this).attr("id").replace(MENU_ITEM_PREFIX, "");
             RHSContentController.moveToMenuItemByID(selectedID);
         });
+    };
+    LHSMenuController.saveDataAndRefreshMenu = function () {
+        DataHelper.saveItemsToLocalStorage();
+        LHSMenuController.refreshMainMenu();
     };
     return LHSMenuController;
 }());
@@ -10887,7 +10905,7 @@ var RHSContentController = /** @class */ (function () {
         });
         DataHelper.globalCurrentSelectedItem = tt;
         DataHelper.saveSelectedItemToLocalStorage();
-        console.log(tt.id);
+        $("#NewCaseNoteTextArea").trigger("focus");
     };
     return RHSContentController;
 }());
@@ -10956,6 +10974,14 @@ $(function () {
 				<nav class="panel" id="MainMenu_DoneBeforeToday"></nav>
 			</div>
 			<div id="RightSide" class="column content">
+				<div class="level">
+					<div class="level-left">
+						<button class="button" style="margin-right: 0.5rem;" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️</button>
+						<button class="button" style="margin-right: 0.5rem;" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅</button>
+						<span style="margin-right: 0.5rem;">&bull;</span>
+						<button class="button" style="margin-right: 0.5rem;" >🗓</button>
+					</div>
+				</div>
 				<h2 id="RHSTaskTitle"></h2>
 				<table class="table">
 					<thead>
@@ -10970,8 +10996,10 @@ $(function () {
 				</table>
 				<h3 id="RHSCaseNotesHeading">Case Notes</h3>
 				<div style="margin-bottom: 5rem;">
-					<textarea id="NewCaseNoteTextArea" class="textarea" placeholder="Please write a new case note here" rows="3"></textarea>
-					<button id="NewCaseNoteButton" class="button is-info is-disabled is-pulled-right">Add new case note</button>
+					<textarea id="NewCaseNoteTextArea" class="textarea" placeholder="Please write a new case note here"
+						rows="3"></textarea>
+					<button id="NewCaseNoteButton" class="button is-info is-disabled is-pulled-right">Add new case
+						note</button>
 				</div>
 				<div id="RHSCaseNotes"></div>
 			</div>

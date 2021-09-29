@@ -29,6 +29,14 @@
 				<nav class="panel" id="MainMenu_DoneBeforeToday"></nav>
 			</div>
 			<div id="RightSide" class="column content">
+				<div class="level">
+					<div class="level-left">
+						<button class="button" style="margin-right: 0.5rem;" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️</button>
+						<button class="button" style="margin-right: 0.5rem;" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅</button>
+						<span style="margin-right: 0.5rem;">&bull;</span>
+						<button class="button" style="margin-right: 0.5rem;" >🗓</button>
+					</div>
+				</div>
 				<h2 id="RHSTaskTitle"></h2>
 				<table class="table">
 					<thead>
@@ -43,8 +51,10 @@
 				</table>
 				<h3 id="RHSCaseNotesHeading">Case Notes</h3>
 				<div style="margin-bottom: 5rem;">
-					<textarea id="NewCaseNoteTextArea" class="textarea" placeholder="Please write a new case note here" rows="3"></textarea>
-					<button id="NewCaseNoteButton" class="button is-info is-disabled is-pulled-right">Add new case note</button>
+					<textarea id="NewCaseNoteTextArea" class="textarea" placeholder="Please write a new case note here"
+						rows="3"></textarea>
+					<button id="NewCaseNoteButton" class="button is-info is-disabled is-pulled-right">Add new case
+						note</button>
 				</div>
 				<div id="RHSCaseNotes"></div>
 			</div>
