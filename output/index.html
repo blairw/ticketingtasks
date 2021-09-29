@@ -10413,6 +10413,14 @@ body {
 #NewCaseNoteButton {
   margin-top: 0.5rem;
 }
+
+.is-starred-menu-item {
+  font-weight: bold;
+}
+
+.is-starred-menu-item:not(.is-active) {
+  color: goldenrod;
+}
 </style>
 <script>
 /*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
@@ -10509,7 +10517,8 @@ var TaskTicket = /** @class */ (function () {
             this.completedTs = null;
         }
         else {
-            this.setCompleted();
+            this.isStarred = false;
+            this.completedTs = new Date();
         }
         LHSMenuController.saveDataAndRefreshMenu();
     };
@@ -10662,6 +10671,9 @@ var DataHelper = /** @class */ (function () {
                 if (value["delegation"]) {
                     tt.delegation = value["delegation"];
                 }
+                if (value["isStarred"]) {
+                    tt.isStarred = (value["isStarred"] == true);
+                }
                 if (value["caseNotes"]) {
                     $.each(value["caseNotes"], function (index, caseNote) {
                         if (caseNote) {
@@ -10805,7 +10817,7 @@ var LHSMenuController = /** @class */ (function () {
                     itemClasses += ' is-completed';
                 }
                 if (item.isStarred) {
-                    itemClasses += ' has-text-weight-bold';
+                    itemClasses += ' is-starred-menu-item';
                 }
                 var preparedHTML = ""
                     + "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"

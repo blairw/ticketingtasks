@@ -39,7 +39,7 @@ class LHSMenuController {
 					itemClasses += ' is-completed'
 				}
 				if (item.isStarred) {
-					itemClasses += ' has-text-weight-bold'
+					itemClasses += ' is-starred-menu-item'
 				}
 
 				let preparedHTML = ""

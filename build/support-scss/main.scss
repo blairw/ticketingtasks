@@ -51,3 +51,11 @@ $family-monospace: "Courier Prime Code", sans-serif;
 #NewCaseNoteButton {
 	margin-top: 0.5rem;
 }
+
+.is-starred-menu-item {
+	font-weight: bold;
+}
+
+.is-starred-menu-item:not(.is-active) {
+	color: goldenrod;
+}

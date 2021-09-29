@@ -72,6 +72,9 @@ class DataHelper {
 				if (value["delegation"]) {
 					tt.delegation = value["delegation"];
 				}
+				if (value["isStarred"]) {
+					tt.isStarred = (value["isStarred"] == true);
+				}
 				
 				if (value["caseNotes"]) {
 					$.each(value["caseNotes"], function(index, caseNote) {

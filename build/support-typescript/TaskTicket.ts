@@ -29,7 +29,8 @@ class TaskTicket {
 		if (this.completedTs) {
 			this.completedTs = null;
 		} else {
-			this.setCompleted();
+			this.isStarred = false;
+			this.completedTs = new Date();
 		}
 
 		LHSMenuController.saveDataAndRefreshMenu();
