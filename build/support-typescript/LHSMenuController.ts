@@ -35,17 +35,27 @@ class LHSMenuController {
 
 				// Adapted from: https://stackoverflow.com/questions/61627784/right-align-text-in-bulma-panel-block
 				let itemClasses = 'TTMenuItem panel-block is-justify-content-space-between';
+				let badges = '';
 				if (item.completedTs) {
 					itemClasses += ' is-completed'
 				}
 				if (item.isStarred) {
 					itemClasses += ' is-starred-menu-item'
+					badges = '⭐️';
+				}
+				if (item.isFlagged) {
+					itemClasses += ' is-flagged-menu-item'
+					badges = '🔴';
+				}
+				if (item.delegation) {
+					badges = '💼';
+
 				}
 
 				let preparedHTML = ""
 					+ "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
 					+ item.title
-					+ (item.isStarred ? "<div class='is-pulled-right'>⭐️</div>" : "")
+					+ "<div class='is-pulled-right'>" + badges + "</div>"
 					+ "</a>";
 
 				$("#MainMenu_" + destinationDom).append(preparedHTML);

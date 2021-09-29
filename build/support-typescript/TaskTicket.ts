@@ -10,6 +10,7 @@ class TaskTicket {
 	completedTs?: Date;
 	dueDate?: Date;
 	isStarred = false;
+	isFlagged = false;
 
 	caseNotes: Array<CaseNote> = [];
 
@@ -21,6 +22,12 @@ class TaskTicket {
 
 	public toggleStar() {
 		this.isStarred = !this.isStarred;
+
+		LHSMenuController.saveDataAndRefreshMenu();
+	}
+
+	public toggleFlag() {
+		this.isFlagged = !this.isFlagged;
 
 		LHSMenuController.saveDataAndRefreshMenu();
 	}

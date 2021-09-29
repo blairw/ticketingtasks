@@ -66,6 +66,24 @@ class RHSContentController {
 			$("#RHSCaseNotes").append(preparedCaseNoteHTML);
 		});
 
+		// Toolbar stuff, maybe should move to Toolbar Controller
+		if (tt.isStarred) {
+			$("#ToolbarStarButton").addClass("is-warning");
+		} else {
+			$("#ToolbarStarButton").removeClass("is-warning");
+		}
+		if (tt.isFlagged) {
+			$("#ToolbarFlagButton").addClass("is-danger");
+		} else {
+			$("#ToolbarFlagButton").removeClass("is-danger");
+		}
+		if (tt.completedTs) {
+			$("#ToolbarTickButton").addClass("is-success");
+		} else {
+			$("#ToolbarTickButton").removeClass("is-success");
+		}
+		
+
 		DataHelper.globalCurrentSelectedItem = tt;
 		DataHelper.saveSelectedItemToLocalStorage();
 		$("#NewCaseNoteTextArea").trigger("focus");

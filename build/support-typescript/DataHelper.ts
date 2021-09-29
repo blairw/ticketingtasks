@@ -75,6 +75,9 @@ class DataHelper {
 				if (value["isStarred"]) {
 					tt.isStarred = (value["isStarred"] == true);
 				}
+				if (value["isFlagged"]) {
+					tt.isFlagged = (value["isFlagged"] == true);
+				}
 				
 				if (value["caseNotes"]) {
 					$.each(value["caseNotes"], function(index, caseNote) {

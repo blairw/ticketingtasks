@@ -344,7 +344,7 @@ input,
 optgroup,
 select,
 textarea {
-  font-family: "Work Sans", "Lucida Grande", sans-serif;
+  font-family: "Lucida Grande", sans-serif;
 }
 
 code,
@@ -9203,15 +9203,15 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
 }
 
 .is-family-primary {
-  font-family: "Work Sans", "Lucida Grande", sans-serif !important;
+  font-family: "Lucida Grande", sans-serif !important;
 }
 
 .is-family-secondary {
-  font-family: "Work Sans", "Lucida Grande", sans-serif !important;
+  font-family: "Lucida Grande", sans-serif !important;
 }
 
 .is-family-sans-serif {
-  font-family: "Work Sans", "Lucida Grande", sans-serif !important;
+  font-family: "Lucida Grande", sans-serif !important;
 }
 
 .is-family-monospace {
@@ -10414,6 +10414,7 @@ body {
   margin-top: 0.5rem;
 }
 
+.is-flagged-menu-item,
 .is-starred-menu-item {
   font-weight: bold;
 }
@@ -10422,8 +10423,23 @@ body {
   color: goldenrod;
 }
 
+.is-starred-menu-item.is-active,
+.is-starred-menu-item.is-active:hover {
+  background-color: goldenrod;
+}
+
+.is-flagged-menu-item:not(.is-active) {
+  color: #b5004e;
+}
+
+.is-flagged-menu-item.is-active,
+.is-flagged-menu-item.is-active:hover {
+  background-color: #b5004e;
+}
+
 .ToolbarItem {
   margin-right: 0.5rem;
+  font-size: 10pt;
 }
 </style>
 <script>
@@ -10508,6 +10524,7 @@ var CaseNote = /** @class */ (function () {
 var TaskTicket = /** @class */ (function () {
     function TaskTicket(title) {
         this.isStarred = false;
+        this.isFlagged = false;
         this.caseNotes = [];
         this.id = MyUtilities.generateUUID();
         this.title = title;
@@ -10515,6 +10532,10 @@ var TaskTicket = /** @class */ (function () {
     }
     TaskTicket.prototype.toggleStar = function () {
         this.isStarred = !this.isStarred;
+        LHSMenuController.saveDataAndRefreshMenu();
+    };
+    TaskTicket.prototype.toggleFlag = function () {
+        this.isFlagged = !this.isFlagged;
         LHSMenuController.saveDataAndRefreshMenu();
     };
     TaskTicket.prototype.toggleCompletion = function () {
@@ -10679,6 +10700,9 @@ var DataHelper = /** @class */ (function () {
                 if (value["isStarred"]) {
                     tt.isStarred = (value["isStarred"] == true);
                 }
+                if (value["isFlagged"]) {
+                    tt.isFlagged = (value["isFlagged"] == true);
+                }
                 if (value["caseNotes"]) {
                     $.each(value["caseNotes"], function (index, caseNote) {
                         if (caseNote) {
@@ -10818,16 +10842,25 @@ var LHSMenuController = /** @class */ (function () {
                 var destinationDom = TaskTicketCategoryHelper.enumToDomName(bucketID);
                 // Adapted from: https://stackoverflow.com/questions/61627784/right-align-text-in-bulma-panel-block
                 var itemClasses = 'TTMenuItem panel-block is-justify-content-space-between';
+                var badges = '';
                 if (item.completedTs) {
                     itemClasses += ' is-completed';
                 }
                 if (item.isStarred) {
                     itemClasses += ' is-starred-menu-item';
+                    badges = '⭐️';
+                }
+                if (item.isFlagged) {
+                    itemClasses += ' is-flagged-menu-item';
+                    badges = '🔴';
+                }
+                if (item.delegation) {
+                    badges = '💼';
                 }
                 var preparedHTML = ""
                     + "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
                     + item.title
-                    + (item.isStarred ? "<div class='is-pulled-right'>⭐️</div>" : "")
+                    + "<div class='is-pulled-right'>" + badges + "</div>"
                     + "</a>";
                 $("#MainMenu_" + destinationDom).append(preparedHTML);
             });
@@ -10920,6 +10953,25 @@ var RHSContentController = /** @class */ (function () {
             preparedCaseNoteHTML += "</div>";
             $("#RHSCaseNotes").append(preparedCaseNoteHTML);
         });
+        // Toolbar stuff, maybe should move to Toolbar Controller
+        if (tt.isStarred) {
+            $("#ToolbarStarButton").addClass("is-warning");
+        }
+        else {
+            $("#ToolbarStarButton").removeClass("is-warning");
+        }
+        if (tt.isFlagged) {
+            $("#ToolbarFlagButton").addClass("is-danger");
+        }
+        else {
+            $("#ToolbarFlagButton").removeClass("is-danger");
+        }
+        if (tt.completedTs) {
+            $("#ToolbarTickButton").addClass("is-success");
+        }
+        else {
+            $("#ToolbarTickButton").removeClass("is-success");
+        }
         DataHelper.globalCurrentSelectedItem = tt;
         DataHelper.saveSelectedItemToLocalStorage();
         $("#NewCaseNoteTextArea").trigger("focus");
@@ -10950,7 +11002,8 @@ var ToolbarController = /** @class */ (function () {
         });
         var keyTrackers = {
             "#NewCaseNoteTextArea": "#NewCaseNoteButton",
-            "#NewTaskText": "#NewTaskButton"
+            "#NewTaskText": "#NewTaskButton",
+            "#DelegationInput": "#DelegationButton"
         };
         $.each(keyTrackers, function (myTextarea, myButton) {
             $(myTextarea).on("keyup", function () {
@@ -10965,16 +11018,17 @@ var ToolbarController = /** @class */ (function () {
         });
     };
     ToolbarController.userDidClickDueDateButton = function () {
-        $("#DueDateDatePicker").animate({ width: 'toggle' }, 100);
         if (ToolbarController.dueDateDatePickerVisible) {
-            // behaviour if due date picker visible
+            // behaviour if due date picker already visible
             var selectedDueDate = $("#DueDateDatePicker").val();
             DataHelper.globalCurrentSelectedItem.setDueDate(selectedDueDate);
-            $("#DueDateButton").removeClass("is-info");
-            $("#DueDateButton").removeClass("is-disabled");
-            $("#DueDateButton").html("🗓 due date");
+            ToolbarController.hideDetail("#DueDateButton");
         }
         else {
+            // behaviour if due date picker not yet visible
+            ToolbarController.hideAllDetail();
+            $("#DueDateDatePicker").animate({ width: 'toggle' }, 100);
+            $("#DueDateDatePicker").trigger("focus");
             // Adapted from https://stackoverflow.com/questions/596608/slide-right-to-left
             $("#DueDateButton").addClass("is-info");
             $("#DueDateButton").addClass("is-disabled");
@@ -10982,7 +11036,51 @@ var ToolbarController = /** @class */ (function () {
             ToolbarController.dueDateDatePickerVisible = true;
         }
     };
+    ToolbarController.userDidClickDelegationButton = function () {
+        if (ToolbarController.delegationInputVisible) {
+            // behaviour if due date picker already visible
+            var enteredDelegation = $("#DelegationInput").val();
+            DataHelper.globalCurrentSelectedItem.setDelegation(enteredDelegation);
+            ToolbarController.hideDetail("#DelegationButton");
+        }
+        else {
+            // behaviour if due date picker not yet visible
+            ToolbarController.hideAllDetail();
+            $("#DelegationInput").animate({ width: 'toggle' }, 100);
+            $("#DelegationInput").trigger("focus");
+            // Adapted from https://stackoverflow.com/questions/596608/slide-right-to-left
+            $("#DelegationButton").addClass("is-info");
+            $("#DelegationButton").addClass("is-disabled");
+            $("#DelegationButton").html("💼 set delegation");
+            ToolbarController.delegationInputVisible = true;
+        }
+    };
+    ToolbarController.hideAllDetail = function () {
+        $.each(["#DueDateButton", "#DelegationButton"], function (index, value) {
+            ToolbarController.hideDetail(value);
+        });
+    };
+    ToolbarController.hideDetail = function (buttonSelector) {
+        var buttonLabel = "";
+        var inputSelector = "";
+        if (buttonSelector == "#DueDateButton") {
+            buttonLabel = "🗓 due";
+            inputSelector = "#DueDateDatePicker";
+            ToolbarController.dueDateDatePickerVisible = false;
+        }
+        else if (buttonSelector == "#DelegationButton") {
+            buttonLabel = "💼 delegate";
+            inputSelector = "#DelegationInput";
+            ToolbarController.delegationInputVisible = false;
+        }
+        $(buttonSelector).removeClass("is-info");
+        $(buttonSelector).removeClass("is-disabled");
+        $(buttonSelector).html(buttonLabel);
+        $(inputSelector).val("");
+        $(inputSelector).hide();
+    };
     ToolbarController.dueDateDatePickerVisible = false;
+    ToolbarController.delegationInputVisible = false;
     return ToolbarController;
 }());
 $(function () {
@@ -11017,7 +11115,7 @@ function bodyDidLoad() {
 						<button id="NewTaskButton" class="button is-link is-disabled">New task</button>
 					</div>
 				</div>
-				<nav class="panel is-danger" id="MainMenu_Overdue"></nav>
+				<nav class="panel" id="MainMenu_Overdue"></nav>
 				<nav class="panel" id="MainMenu_DueToday"></nav>
 				<nav class="panel" id="MainMenu_DueSoon"></nav>
 				<nav class="panel" id="MainMenu_Neglected"></nav>
@@ -11025,13 +11123,17 @@ function bodyDidLoad() {
 				<nav class="panel" id="MainMenu_DoneBeforeToday"></nav>
 			</div>
 			<div id="RightSide" class="column content">
-				<div class="level">
+				<div id="MainToolbar" class="level">
 					<div class="level-left">
-						<button class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️ star</button>
-						<button class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅ done</button>
+						<button id="ToolbarStarButton" class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️</button>
+						<button id="ToolbarFlagButton" class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleFlag()">🔴</button>
+						<button id="ToolbarTickButton" class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅</button>
 						<span class="ToolbarItem">&bull;</span>
-						<input id="DueDateDatePicker" class="ToolbarItem input" style="display:none;" type="date">
-						<button id="DueDateButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDueDateButton()">🗓 due date</button>
+						<input id="DueDateDatePicker" class="ToolbarItem input ToolbarItemConditionallyShown" style="display:none;" type="date">
+						<button id="DueDateButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDueDateButton()">🗓 due</button>
+						<span class="ToolbarItem">&bull;</span>
+						<input id="DelegationInput" class="ToolbarItem input ToolbarItemConditionallyShown" style="display:none;" placeholder="Delegation">
+						<button id="DelegationButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDelegationButton()">💼 delegate</button>
 					</div>
 				</div>
 				<h2 id="RHSTaskTitle"></h2>

@@ -21,7 +21,7 @@
 						<button id="NewTaskButton" class="button is-link is-disabled">New task</button>
 					</div>
 				</div>
-				<nav class="panel is-danger" id="MainMenu_Overdue"></nav>
+				<nav class="panel" id="MainMenu_Overdue"></nav>
 				<nav class="panel" id="MainMenu_DueToday"></nav>
 				<nav class="panel" id="MainMenu_DueSoon"></nav>
 				<nav class="panel" id="MainMenu_Neglected"></nav>
@@ -29,13 +29,17 @@
 				<nav class="panel" id="MainMenu_DoneBeforeToday"></nav>
 			</div>
 			<div id="RightSide" class="column content">
-				<div class="level">
+				<div id="MainToolbar" class="level">
 					<div class="level-left">
-						<button class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️ star</button>
-						<button class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅ done</button>
+						<button id="ToolbarStarButton" class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️</button>
+						<button id="ToolbarFlagButton" class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleFlag()">🔴</button>
+						<button id="ToolbarTickButton" class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅</button>
 						<span class="ToolbarItem">&bull;</span>
-						<input id="DueDateDatePicker" class="ToolbarItem input" style="display:none;" type="date">
-						<button id="DueDateButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDueDateButton()">🗓 due date</button>
+						<input id="DueDateDatePicker" class="ToolbarItem input ToolbarItemConditionallyShown" style="display:none;" type="date">
+						<button id="DueDateButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDueDateButton()">🗓 due</button>
+						<span class="ToolbarItem">&bull;</span>
+						<input id="DelegationInput" class="ToolbarItem input ToolbarItemConditionallyShown" style="display:none;" placeholder="Delegation">
+						<button id="DelegationButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDelegationButton()">💼 delegate</button>
 					</div>
 				</div>
 				<h2 id="RHSTaskTitle"></h2>
