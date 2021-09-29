@@ -1,6 +1,6 @@
 </head>
 
-<body>
+<body onload="bodyDidLoad()">
 	<div id="MainContainer">
 		<div id="DocumentHeading" class="level">
 			<div class="level-left">
@@ -31,10 +31,11 @@
 			<div id="RightSide" class="column content">
 				<div class="level">
 					<div class="level-left">
-						<button class="button" style="margin-right: 0.5rem;" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️ star</button>
-						<button class="button" style="margin-right: 0.5rem;" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅ done</button>
-						<span style="margin-right: 0.5rem;">&bull;</span>
-						<button class="button" style="margin-right: 0.5rem;" >🗓</button>
+						<button class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleStar()">⭐️ star</button>
+						<button class="ToolbarItem button" onclick="DataHelper.globalCurrentSelectedItem.toggleCompletion()">✅ done</button>
+						<span class="ToolbarItem">&bull;</span>
+						<input id="DueDateDatePicker" class="ToolbarItem input" style="display:none;" type="date">
+						<button id="DueDateButton" class="ToolbarItem button" onclick="ToolbarController.userDidClickDueDateButton()">🗓 due date</button>
 					</div>
 				</div>
 				<h2 id="RHSTaskTitle"></h2>

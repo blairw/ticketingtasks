@@ -17,6 +17,7 @@
 		"DataHelper.ts",
 		"LHSMenuController.ts",
 		"RHSContentController.ts",
+		"ToolbarController.ts",
 		"Main.ts"
 	]
 }
