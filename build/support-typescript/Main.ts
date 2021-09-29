@@ -21,6 +21,7 @@ $(function () {
 		$("#NewTaskText").val("");
 
 		LHSMenuController.refreshMainMenu();
+		RHSContentController.moveToMenuItemByID(tt.id);
 	});
 
 
