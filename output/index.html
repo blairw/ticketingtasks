@@ -10409,6 +10409,10 @@ body {
   border-top: lightgray !important;
   border-bottom: lightgray !important;
 }
+
+#NewCaseNoteButton {
+  margin-top: 0.5rem;
+}
 </style>
 <script>
 /*! jQuery v3.6.0 | (c) OpenJS Foundation and other contributors | jquery.org/license */
@@ -10495,6 +10499,11 @@ var TaskTicket = /** @class */ (function () {
         this.title = title;
         this.createTs = new Date();
     }
+    TaskTicket.prototype.setDueDate = function (dateString) {
+        this.dueDate = new Date(dateString);
+        DataHelper.saveItemsToLocalStorage();
+        LHSMenuController.refreshMainMenu();
+    };
     TaskTicket.prototype.setCompleted = function () {
         this.completedTs = new Date();
         DataHelper.saveItemsToLocalStorage();
@@ -10646,10 +10655,12 @@ var DataHelper = /** @class */ (function () {
                 }
                 if (value["caseNotes"]) {
                     $.each(value["caseNotes"], function (index, caseNote) {
-                        var cn = new CaseNote(caseNote['title']);
-                        cn.id = caseNote['id'];
-                        cn.createTs = new Date(caseNote['createTs']);
-                        tt.caseNotes.push(cn);
+                        if (caseNote) {
+                            var cn = new CaseNote(caseNote['title']);
+                            cn.id = caseNote['id'];
+                            cn.createTs = new Date(caseNote['createTs']);
+                            tt.caseNotes.push(cn);
+                        }
                     });
                 }
                 DataHelper.globalItems[tt.id] = tt;
@@ -10885,6 +10896,11 @@ $(function () {
     LHSMenuController.refreshMainMenu();
     // Enable this if you need animated #anchor links
     // AnimationController.smoothScrollLinks();
+    $("#NewCaseNoteButton").on("click", function () {
+        var newCaseNoteTitle = $("#NewCaseNoteTextArea").val().toString();
+        DataHelper.globalCurrentSelectedItem.addCaseNote(newCaseNoteTitle);
+        $("#NewCaseNoteTextArea").val("");
+    });
     $("#NewTaskButton").on("click", function () {
         var newTaskTitle = $("#NewTaskText").val().toString();
         var tt = new TaskTicket(newTaskTitle);
@@ -10892,14 +10908,20 @@ $(function () {
         $("#NewTaskText").val("");
         LHSMenuController.refreshMainMenu();
     });
-    $("#NewTaskText").on("keyup", function () {
-        var textEntered = $("#NewTaskText").val();
-        if (textEntered.length > 2) {
-            $("#NewTaskButton").removeClass("is-disabled");
-        }
-        else {
-            $("#NewTaskButton").addClass("is-disabled");
-        }
+    var keyTrackers = {
+        "#NewCaseNoteTextArea": "#NewCaseNoteButton",
+        "#NewTaskText": "#NewTaskButton"
+    };
+    $.each(keyTrackers, function (myTextarea, myButton) {
+        $(myTextarea).on("keyup", function () {
+            var textEntered = $(myTextarea).val();
+            if (textEntered.length > 2) {
+                $(myButton).removeClass("is-disabled");
+            }
+            else {
+                $(myButton).addClass("is-disabled");
+            }
+        });
     });
 });
 </script>
@@ -10947,6 +10969,10 @@ $(function () {
 					</tbody>
 				</table>
 				<h3 id="RHSCaseNotesHeading">Case Notes</h3>
+				<div style="margin-bottom: 5rem;">
+					<textarea id="NewCaseNoteTextArea" class="textarea" placeholder="Please write a new case note here" rows="3"></textarea>
+					<button id="NewCaseNoteButton" class="button is-info is-disabled is-pulled-right">Add new case note</button>
+				</div>
 				<div id="RHSCaseNotes"></div>
 			</div>
 		</div>

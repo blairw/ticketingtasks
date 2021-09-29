@@ -18,6 +18,13 @@ class TaskTicket {
 		this.createTs = new Date();
 	}
 
+	public setDueDate(dateString: string) {
+		this.dueDate = new Date(dateString);
+		
+		DataHelper.saveItemsToLocalStorage();
+		LHSMenuController.refreshMainMenu();
+	}
+
 	public setCompleted() {
 		this.completedTs = new Date();
 

@@ -75,11 +75,13 @@ class DataHelper {
 				
 				if (value["caseNotes"]) {
 					$.each(value["caseNotes"], function(index, caseNote) {
-						let cn = new CaseNote(caseNote['title']);
-						cn.id = caseNote['id'];
-						cn.createTs = new Date(caseNote['createTs']);
-
-						tt.caseNotes.push(cn);
+						if (caseNote) {
+							let cn = new CaseNote(caseNote['title']);
+							cn.id = caseNote['id'];
+							cn.createTs = new Date(caseNote['createTs']);
+	
+							tt.caseNotes.push(cn);
+						}
 					});
 				}
 
