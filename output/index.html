@@ -10353,6 +10353,63 @@ body {
   margin-bottom: 1rem;
 }
 
+.TTMenuItem.is-active,
+.TTMenuItem.is-active:hover {
+  color: white;
+  background-color: #336fcc;
+}
+
+.TTMenuItemWrapper {
+  border-top: lightgray !important;
+  border-bottom: lightgray !important;
+}
+
+.TTMenuItem {
+  font-size: 10pt;
+}
+
+.TTMenuItem.is-completed,
+.TTMenuItem.is-completed:hover:not(.is-active) {
+  color: lightgray;
+  text-decoration: line-through;
+}
+
+.is-flagged-menu-item,
+.is-starred-menu-item {
+  font-weight: bold;
+}
+
+.is-starred-menu-item:not(.is-active) {
+  color: goldenrod;
+}
+
+.is-starred-menu-item.is-active,
+.is-starred-menu-item.is-active:hover {
+  background-color: goldenrod;
+}
+
+.is-flagged-menu-item:not(.is-active) {
+  color: #b5004e;
+}
+
+.is-flagged-menu-item.is-active,
+.is-flagged-menu-item.is-active:hover {
+  background-color: #b5004e;
+}
+
+.is-delegated-menu-item:not(.is-active) {
+  color: gray;
+}
+
+.is-delegated-menu-item.is-active,
+.is-delegated-menu-item.is-active:hover {
+  background-color: gray;
+}
+
+.is-delegated-menu-item > span {
+  font-style: italic;
+}
+
 #MainContainer {
   margin: 0 auto;
   background-color: white;
@@ -10385,56 +10442,12 @@ body {
   font-size: 10pt;
 }
 
-.TTMenuItem.is-active,
-.TTMenuItem.is-active:hover {
-  color: white;
-  background-color: #336fcc;
-}
-
-.TTMenuItem {
-  font-size: 10pt;
-}
-
-.TTMenuItem.is-completed,
-.TTMenuItem.is-completed:hover:not(.is-active) {
-  color: lightgray;
-  text-decoration: line-through;
-}
-
 #RHSTaskDetails {
   font-size: 10pt;
 }
 
-.TTMenuItemWrapper {
-  border-top: lightgray !important;
-  border-bottom: lightgray !important;
-}
-
 #NewCaseNoteButton {
   margin-top: 0.5rem;
-}
-
-.is-flagged-menu-item,
-.is-starred-menu-item {
-  font-weight: bold;
-}
-
-.is-starred-menu-item:not(.is-active) {
-  color: goldenrod;
-}
-
-.is-starred-menu-item.is-active,
-.is-starred-menu-item.is-active:hover {
-  background-color: goldenrod;
-}
-
-.is-flagged-menu-item:not(.is-active) {
-  color: #b5004e;
-}
-
-.is-flagged-menu-item.is-active,
-.is-flagged-menu-item.is-active:hover {
-  background-color: #b5004e;
 }
 
 .ToolbarItem {
@@ -10591,6 +10604,9 @@ var TaskTicket = /** @class */ (function () {
                 if (daysLeft < 0) {
                     preparedResponse = TaskTicketCategory.OVERDUE;
                 }
+                else if (daysLeft <= 1) {
+                    preparedResponse = TaskTicketCategory.DUE_TOMORROW;
+                }
                 else if (daysLeft < 5) {
                     preparedResponse = TaskTicketCategory.DUE_SOON;
                 }
@@ -10614,6 +10630,7 @@ var TaskTicketCategory;
     TaskTicketCategory[TaskTicketCategory["NEGLECTED"] = 3] = "NEGLECTED";
     TaskTicketCategory[TaskTicketCategory["DUE_SOON"] = 4] = "DUE_SOON";
     TaskTicketCategory[TaskTicketCategory["DUE_TODAY"] = 5] = "DUE_TODAY";
+    TaskTicketCategory[TaskTicketCategory["DUE_TOMORROW"] = 6] = "DUE_TOMORROW";
 })(TaskTicketCategory || (TaskTicketCategory = {}));
 var TaskTicketCategoryHelper = /** @class */ (function () {
     function TaskTicketCategoryHelper() {
@@ -10636,6 +10653,7 @@ var TaskTicketCategoryHelper = /** @class */ (function () {
         _a[TaskTicketCategory.NEGLECTED] = "Neglected",
         _a[TaskTicketCategory.DUE_SOON] = "DueSoon",
         _a[TaskTicketCategory.DUE_TODAY] = "DueToday",
+        _a[TaskTicketCategory.DUE_TOMORROW] = "DueTomorrow",
         _a);
     return TaskTicketCategoryHelper;
 }());
@@ -10817,6 +10835,7 @@ var LHSMenuController = /** @class */ (function () {
     LHSMenuController.refreshMainMenu = function () {
         $("#MainMenu_Overdue").html('<p class="TTMenuPanelHeading panel-heading">Overdue</p>');
         $("#MainMenu_DueToday").html('<p class="TTMenuPanelHeading panel-heading">Due Today</p>');
+        $("#MainMenu_DueTomorrow").html('<p class="TTMenuPanelHeading panel-heading">Due Tomorrow</p>');
         $("#MainMenu_DueSoon").html('<p class="TTMenuPanelHeading panel-heading">Due Soon</p>');
         $("#MainMenu_Neglected").html('<p class="TTMenuPanelHeading panel-heading">Neglected?</p>');
         $("#MainMenu_Uncategorised").html('<p class="TTMenuPanelHeading panel-heading">Uncategorised</p>');
@@ -10855,11 +10874,12 @@ var LHSMenuController = /** @class */ (function () {
                     badges = '🔴';
                 }
                 if (item.delegation) {
+                    itemClasses += ' is-delegated-menu-item';
                     badges = '💼';
                 }
                 var preparedHTML = ""
                     + "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
-                    + item.title
+                    + "<span>" + item.title + "</span>"
                     + "<div class='is-pulled-right'>" + badges + "</div>"
                     + "</a>";
                 $("#MainMenu_" + destinationDom).append(preparedHTML);
@@ -11117,6 +11137,7 @@ function bodyDidLoad() {
 				</div>
 				<nav class="panel" id="MainMenu_Overdue"></nav>
 				<nav class="panel" id="MainMenu_DueToday"></nav>
+				<nav class="panel" id="MainMenu_DueTomorrow"></nav>
 				<nav class="panel" id="MainMenu_DueSoon"></nav>
 				<nav class="panel" id="MainMenu_Neglected"></nav>
 				<nav class="panel" id="MainMenu_Uncategorised"></nav>

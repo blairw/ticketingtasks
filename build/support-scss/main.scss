@@ -17,60 +17,19 @@ $family-monospace: "Courier Prime Code", sans-serif;
 @import "components/basics.scss";
 @import "components/isDisabled.scss";
 @import "components/caseNote.scss";
+@import "components/menuItem.scss";
 @import "layout/masterDetail.scss";
 
 .TTMenuPanelHeading {
 	font-size: 10pt;
 }
 
-.TTMenuItem.is-active,
-.TTMenuItem.is-active:hover {
-	color: white;
-	background-color: $blue;
-}
-
-.TTMenuItem {
-	font-size: 10pt;
-}
-
-.TTMenuItem.is-completed,
-.TTMenuItem.is-completed:hover:not(.is-active) {
-	color: lightgray;
-	text-decoration: line-through;
-}
-
 #RHSTaskDetails {
 	font-size: 10pt;
 }
 
-.TTMenuItemWrapper {
-	border-top: lightgray !important;
-	border-bottom: lightgray !important;
-}
-
 #NewCaseNoteButton {
 	margin-top: 0.5rem;
-}
-
-.is-flagged-menu-item,
-.is-starred-menu-item {
-	font-weight: bold;
-}
-
-.is-starred-menu-item:not(.is-active) {
-	color: goldenrod;
-}
-.is-starred-menu-item.is-active,
-.is-starred-menu-item.is-active:hover {
-	background-color: goldenrod;
-}
-
-.is-flagged-menu-item:not(.is-active) {
-	color: rgb(181, 0, 78);
-}
-.is-flagged-menu-item.is-active,
-.is-flagged-menu-item.is-active:hover {
-	background-color: rgb(181, 0, 78);
 }
 
 .ToolbarItem {

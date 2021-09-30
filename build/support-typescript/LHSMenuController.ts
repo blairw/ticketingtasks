@@ -5,6 +5,7 @@ class LHSMenuController {
 	public static refreshMainMenu() {
 		$("#MainMenu_Overdue").html('<p class="TTMenuPanelHeading panel-heading">Overdue</p>');
 		$("#MainMenu_DueToday").html('<p class="TTMenuPanelHeading panel-heading">Due Today</p>');
+		$("#MainMenu_DueTomorrow").html('<p class="TTMenuPanelHeading panel-heading">Due Tomorrow</p>');
 		$("#MainMenu_DueSoon").html('<p class="TTMenuPanelHeading panel-heading">Due Soon</p>');
 		$("#MainMenu_Neglected").html('<p class="TTMenuPanelHeading panel-heading">Neglected?</p>');
 		$("#MainMenu_Uncategorised").html('<p class="TTMenuPanelHeading panel-heading">Uncategorised</p>');
@@ -48,13 +49,14 @@ class LHSMenuController {
 					badges = '🔴';
 				}
 				if (item.delegation) {
+					itemClasses += ' is-delegated-menu-item'
 					badges = '💼';
 
 				}
 
 				let preparedHTML = ""
 					+ "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
-					+ item.title
+					+ "<span>" + item.title + "</span>"
 					+ "<div class='is-pulled-right'>" + badges + "</div>"
 					+ "</a>";
 

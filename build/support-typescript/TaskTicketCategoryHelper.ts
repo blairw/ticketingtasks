@@ -4,7 +4,8 @@ enum TaskTicketCategory {
 	OVERDUE,
 	NEGLECTED,
 	DUE_SOON,
-	DUE_TODAY
+	DUE_TODAY,
+	DUE_TOMORROW
 }
 
 type TaskTicketCategoryBucketSet = EnumDictionary<TaskTicketCategory, Array<TaskTicket>>;
@@ -18,6 +19,7 @@ class TaskTicketCategoryHelper {
 		[TaskTicketCategory.NEGLECTED]: "Neglected",
 		[TaskTicketCategory.DUE_SOON]: "DueSoon",
 		[TaskTicketCategory.DUE_TODAY]: "DueToday",
+		[TaskTicketCategory.DUE_TOMORROW]: "DueTomorrow"
 	};
 
 	public static enumToDomName(ttc: TaskTicketCategory): string {

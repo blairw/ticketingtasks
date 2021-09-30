@@ -1,0 +1,52 @@
+.TTMenuItem.is-active,
+.TTMenuItem.is-active:hover {
+    color: white;
+    background-color: $blue;
+}
+
+.TTMenuItemWrapper {
+    border-top: lightgray !important;
+    border-bottom: lightgray !important;
+}
+
+.TTMenuItem {
+	font-size: 10pt;
+}
+
+.TTMenuItem.is-completed,
+.TTMenuItem.is-completed:hover:not(.is-active) {
+	color: lightgray;
+	text-decoration: line-through;
+}
+
+.is-flagged-menu-item,
+.is-starred-menu-item {
+    font-weight: bold;
+}
+
+.is-starred-menu-item:not(.is-active) {
+    color: goldenrod;
+}
+.is-starred-menu-item.is-active,
+.is-starred-menu-item.is-active:hover {
+    background-color: goldenrod;
+}
+
+.is-flagged-menu-item:not(.is-active) {
+    color: rgb(181, 0, 78);
+}
+.is-flagged-menu-item.is-active,
+.is-flagged-menu-item.is-active:hover {
+    background-color: rgb(181, 0, 78);
+}
+
+.is-delegated-menu-item:not(.is-active) {
+    color: gray;
+}
+.is-delegated-menu-item.is-active,
+.is-delegated-menu-item.is-active:hover {
+    background-color: gray;
+}
+.is-delegated-menu-item > span {
+    font-style: italic;
+}
