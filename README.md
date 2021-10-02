@@ -2,11 +2,15 @@
 
 **A very simple personal ticketing system (task management / todo-list system).**
 
-Most functionalities are not yet implemented. I made this in a hurry because I needed something for myself urgently.
+Some functionalities are not yet implemented. I made this in a hurry because I needed something for myself urgently while coping with unprecedented workload during the final months of a PhD 😅
+
+If you want to use this, just clone this repo and open `output/index.html` in your browser. That's it, no further installation necessary, this runs 100% in your browser and all data is managed by [Window.localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
 
 ![docs/ticketingtasks.png](docs/ticketingtasks.png)
 
-## Technologies
+## Technology stack
+
+Only if you're interested, because [not everyone is](https://twitter.com/shituserstory/status/1438105256206999560).
 
 - TypeScript ✨
 - SCSS 🌈
@@ -22,24 +26,6 @@ Rename the current ticket:
 
 ```js
 DataHelper.globalCurrentSelectedItem.title = 'New title goes here please';
-```
-
-Add a **note** ot the current ticket:
-
-```js
-DataHelper.globalCurrentSelectedItem.note = 'This is such note, very text, wow.';
-```
-
-Set the due date for a ticket:
-
-```js
-DataHelper.globalCurrentSelectedItem.dueDate = new Date("2021-09-24");
-```
-
-Set the current ticket to be completed:
-
-```js
-DataHelper.globalCurrentSelectedItem.setCompleted();
 ```
 
 To make changes persistent, save changes to LocalStorage:
