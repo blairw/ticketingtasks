@@ -61,7 +61,7 @@ class MyUtilities {
     public static getLocalyyyymmdd(dateObject: Date): string {
         return dateObject.getFullYear()
             + "-"
-            + MyUtilities.pad(dateObject.getMonth().toString(), 2, "0")
+            + MyUtilities.pad((dateObject.getMonth() + 1).toString(), 2, "0")
             + "-"
             + MyUtilities.pad(dateObject.getDate().toString(), 2, "0");
     }

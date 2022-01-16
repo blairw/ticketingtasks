@@ -10512,9 +10512,9 @@ var MyUtilities = /** @class */ (function () {
     MyUtilities.getLocalyyyymmdd = function (dateObject) {
         return dateObject.getFullYear()
             + "-"
-            + MyUtilities.pad(dateObject.getMonth().toString(), 2, "0")
+            + MyUtilities.pad((dateObject.getMonth() + 1).toString(), 2, "0")
             + "-"
-            + MyUtilities.pad(dateObject.getDate().toString(), 2, "0");
+            + MyUtilities.pad((dateObject.getDate() + 1).toString(), 2, "0");
     };
     MyUtilities.getPreferredLocalString = function (dateObject) {
         return dateObject.toLocaleString('en-AU', {
