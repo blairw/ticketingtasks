@@ -55,6 +55,13 @@ class TaskTicket {
 		LHSMenuController.saveDataAndRefreshMenu();
 	}
 
+	public setTitle(title: string) {
+		this.title = title;
+		LHSMenuController.refreshMainMenu();
+	
+		LHSMenuController.saveDataAndRefreshMenu();
+	}
+
 	public setExternalId(externalId: string) {
 		this.externalId = externalId;
 		LHSMenuController.refreshMainMenu();
