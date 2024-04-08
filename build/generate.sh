@@ -22,6 +22,7 @@ cat files-generated/main.css >> ../output/index.html
 echo "</style>" >> ../output/index.html
 
 echo '<script>' >> ../output/index.html
+cat node_modules/file-saver/dist/FileSaver.min.js >> ../output/index.html
 cat node_modules/jquery/dist/jquery.min.js >> ../output/index.html
 echo >> ../output/index.html
 cat files-generated/main.js >> ../output/index.html
