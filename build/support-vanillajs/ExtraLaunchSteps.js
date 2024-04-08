@@ -1,5 +1,13 @@
 function bodyDidLoad() {
+	// TypeScript start-up
+	Main.main();
+
 	// Put stuff here if you need it to load outside of TypeScript system.
+}
+
+function vanillaJS_exportAndDeleteCompletedTickets() {
+	var nativeObject = DataHelper.deleteAndReturnCompletedItems();
+	vanillaJS_saveToYamlFile(nativeObject);
 }
 
 function vanillaJS_saveToYamlFile(nativeObject) {

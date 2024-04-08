@@ -2,6 +2,20 @@ class DataHelper {
 	public static globalItems: any = {};
 	public static globalCurrentSelectedItem: TaskTicket;
 
+	public static deleteAndReturnCompletedItems(): Array<TaskTicket> {
+		let completedItems: Array<TaskTicket> = [];
+
+		Main.foreachHelper(DataHelper.globalItems, function(key, item) {
+			if (item.isCompleted()) {
+				completedItems.push(item);
+				DataHelper.removeItem(item.id);
+			}
+		});
+
+		LHSMenuController.refreshMainMenu();
+		return completedItems;
+	}
+
 	public static addNewItem(tt: TaskTicket) {
 		DataHelper.globalItems[tt.id] = tt;
 		DataHelper.saveItemsToLocalStorage();

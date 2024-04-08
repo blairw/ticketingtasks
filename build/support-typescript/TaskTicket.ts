@@ -20,6 +20,16 @@ class TaskTicket {
 		this.createTs = new Date();
 	}
 
+	public isCompleted(): boolean {
+		let preparedResponse = false;
+
+		if (null != this.completedTs) {
+			preparedResponse = true;
+		}
+
+		return preparedResponse;
+	}
+
 	public toggleStar() {
 		this.isStarred = !this.isStarred;
 

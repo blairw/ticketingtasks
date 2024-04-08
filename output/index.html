@@ -10522,6 +10522,13 @@ var TaskTicket = /** @class */ (function () {
         this.title = title;
         this.createTs = new Date();
     }
+    TaskTicket.prototype.isCompleted = function () {
+        var preparedResponse = false;
+        if (null != this.completedTs) {
+            preparedResponse = true;
+        }
+        return preparedResponse;
+    };
     TaskTicket.prototype.toggleStar = function () {
         this.isStarred = !this.isStarred;
         LHSMenuController.saveDataAndRefreshMenu();
@@ -10644,6 +10651,17 @@ var TaskTicketCategoryHelper = /** @class */ (function () {
 var DataHelper = /** @class */ (function () {
     function DataHelper() {
     }
+    DataHelper.deleteAndReturnCompletedItems = function () {
+        var completedItems = [];
+        Main.foreachHelper(DataHelper.globalItems, function (key, item) {
+            if (item.isCompleted()) {
+                completedItems.push(item);
+                DataHelper.removeItem(item.id);
+            }
+        });
+        LHSMenuController.refreshMainMenu();
+        return completedItems;
+    };
     DataHelper.addNewItem = function (tt) {
         DataHelper.globalItems[tt.id] = tt;
         DataHelper.saveItemsToLocalStorage();
@@ -11087,14 +11105,34 @@ var ToolbarController = /** @class */ (function () {
     ToolbarController.delegationInputVisible = false;
     return ToolbarController;
 }());
-$(function () {
-    DataHelper.retrieveItemsFromLocalStorage();
-    LHSMenuController.refreshMainMenu();
-    ToolbarController.initialise();
-});
+var Main = /** @class */ (function () {
+    function Main() {
+    }
+    Main.main = function () {
+        DataHelper.retrieveItemsFromLocalStorage();
+        LHSMenuController.refreshMainMenu();
+        ToolbarController.initialise();
+    };
+    Main.foreachHelper = function (input_dictionary, callback_function) {
+        // @ts-ignore
+        for (var _i = 0, _a = Object.entries(input_dictionary); _i < _a.length; _i++) {
+            var _b = _a[_i], the_key = _b[0], the_value = _b[1];
+            callback_function(the_key, the_value);
+        }
+    };
+    return Main;
+}());
 
 function bodyDidLoad() {
+	// TypeScript start-up
+	Main.main();
+
 	// Put stuff here if you need it to load outside of TypeScript system.
+}
+
+function vanillaJS_exportAndDeleteCompletedTickets() {
+	var nativeObject = DataHelper.deleteAndReturnCompletedItems();
+	vanillaJS_saveToYamlFile(nativeObject);
 }
 
 function vanillaJS_saveToYamlFile(nativeObject) {
@@ -11124,7 +11162,8 @@ function vanillaJS_saveToYamlFile(nativeObject) {
 			</div>
 			<div class="level-right">
 				<div>
-					<button class="btn" onclick="vanillaJS_saveToYamlFile(DataHelper.globalItems)">Export</button>
+					<button class="button is-small" onclick="vanillaJS_saveToYamlFile(DataHelper.globalItems)">Export</button>
+					<button class="button is-small" onclick="vanillaJS_exportAndDeleteCompletedTickets()">Dump Done Ones</button>
 				</div>
 			</div>
 		</div>
