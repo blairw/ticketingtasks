@@ -6,9 +6,11 @@ $PAGE_WIDTH: 1200px;
 // basics
 @import "base/forceScrollbar.scss";
 
+$red: rgb(181, 0, 78);
 $blue: #336fcc;
 $family-sans-serif: "Lucida Grande", sans-serif;
-$family-monospace: "Courier Prime Code", sans-serif;
+$family-monospace: "Monaco", monospace;
+
 
 // bulma
 @import "../node_modules/bulma/bulma.sass";

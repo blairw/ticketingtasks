@@ -46,7 +46,7 @@ class LHSMenuController {
 				}
 				if (item.isFlagged) {
 					itemClasses += ' is-flagged-menu-item'
-					badges = '🔴';
+					badges = '🚩';
 				}
 				if (item.delegation) {
 					itemClasses += ' is-delegated-menu-item'
@@ -56,9 +56,12 @@ class LHSMenuController {
 
 				let preparedHTML = ""
 					+ "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
-					+ "<span>"
-					+ "<span class='LeftSideMenuIdFragment'>" + item.getIdFragment() + "</span> &nbsp;"
-					+ item.title + "</span>"
+					+ "<table class='TTMenuItemTable'><tr>"
+					+ "<td>"
+					+ "<span class='TTMenuItemTableFragment TTMenuItemTableFragmentForID'>" + item.getIdFragment() + "</span>"
+					+ "</td>"
+					+ "<td><span class='TTMenuItemTableFragment'>" + item.title + "</span></td>"
+					+ "</tr></table>"
 					+ "<div class='is-pulled-right'>" + badges + "</div>"
 					+ "</a>";
 

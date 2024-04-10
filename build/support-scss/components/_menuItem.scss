@@ -1,3 +1,29 @@
+.TTMenuItemTable td {
+    vertical-align: middle;
+}
+
+// Spacing between the ticket tag and the text
+.TTMenuItemTable td:first-child {
+    padding-right: 0.7rem;
+}
+
+.TTMenuItemTableFragment {
+    padding-top: 0.1rem;
+    padding-bottom: 0.1rem;
+    display: inline-block;
+}
+
+.TTMenuItemTableFragmentForID {
+    font-size: 9pt;
+    padding-left: 0.4rem;
+    padding-right: 0.4rem;
+    font-family: $family-monospace;
+    background-color: gray;
+    color: white;
+    border-radius: 0.5rem;
+}
+
+
 .TTMenuItem.is-active,
 .TTMenuItem.is-active:hover {
     color: white;
@@ -33,11 +59,11 @@
 }
 
 .is-flagged-menu-item:not(.is-active) {
-    color: rgb(181, 0, 78);
+    color: $red;
 }
 .is-flagged-menu-item.is-active,
 .is-flagged-menu-item.is-active:hover {
-    background-color: rgb(181, 0, 78);
+    background-color: $red;
 }
 
 .is-delegated-menu-item:not(.is-active) {
@@ -49,4 +75,33 @@
 }
 .is-delegated-menu-item > span {
     font-style: italic;
+}
+
+
+.is-active .TTMenuItemTableFragmentForID {
+    color: $blue;
+    background-color: white;
+}
+
+.is-flagged-menu-item .TTMenuItemTableFragmentForID {
+    color: white;
+    background-color: $red;
+}
+
+
+.is-flagged-menu-item.is-active .TTMenuItemTableFragmentForID {
+    color: $red;
+    background-color: white;
+}
+
+
+.is-starred-menu-item .TTMenuItemTableFragmentForID {
+    color: white;
+    background-color: goldenrod;
+}
+
+
+.is-starred-menu-item.is-active .TTMenuItemTableFragmentForID {
+    color: goldenrod;
+    background-color: white;
 }
