@@ -25,3 +25,9 @@
 	overflow-y: scroll;
 	height: calc(100vh - 60px);
 }
+
+.LeftSideMenuIdFragment {
+	font-family: $family-monospace;
+	background-color: rgba(0, 0, 0, 0.03);
+	padding: 0.3rem;
+}

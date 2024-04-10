@@ -10415,6 +10415,12 @@ body {
   height: calc(100vh - 60px);
 }
 
+.LeftSideMenuIdFragment {
+  font-family: "Courier Prime Code", sans-serif;
+  background-color: rgba(0, 0, 0, 0.03);
+  padding: 0.3rem;
+}
+
 .TTMenuPanelHeading {
   font-size: 10pt;
 }
@@ -10522,12 +10528,56 @@ var TaskTicket = /** @class */ (function () {
         this.title = title;
         this.createTs = new Date();
     }
+    TaskTicket.prototype.addCaseNote = function (title) {
+        var cn = new CaseNote(title);
+        cn.createTs = new Date();
+        cn.id = MyUtilities.generateUUID();
+        this.caseNotes.push(cn);
+        LHSMenuController.saveDataAndRefreshMenu();
+    };
+    TaskTicket.prototype.determineCategory = function () {
+        var preparedResponse = TaskTicketCategory.ASSORTED;
+        // figure out if NEGLECTED
+        var ticketAge = MyUtilities.daysBetween(this.createTs, new Date());
+        if (ticketAge > 3) {
+            preparedResponse = TaskTicketCategory.NEGLECTED;
+        }
+        // figure out if urgent
+        if (this.dueDate) {
+            if (MyUtilities.isSameDay(new Date(), this.dueDate)) {
+                preparedResponse = TaskTicketCategory.DUE_TODAY;
+            }
+            else {
+                var daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
+                // console.log("daysLeft " + this.id + " = " + daysLeft);
+                if (daysLeft < 0) {
+                    preparedResponse = TaskTicketCategory.OVERDUE;
+                }
+                else if (daysLeft <= 1) {
+                    preparedResponse = TaskTicketCategory.DUE_TOMORROW;
+                }
+                else if (daysLeft < 5) {
+                    preparedResponse = TaskTicketCategory.DUE_SOON;
+                }
+            }
+        }
+        // figure out if done before today
+        if (this.completedTs) {
+            if (MyUtilities.isBeforeToday(this.completedTs)) {
+                preparedResponse = TaskTicketCategory.DONE_BEFORE_TODAY;
+            }
+        }
+        return preparedResponse;
+    };
     TaskTicket.prototype.isCompleted = function () {
         var preparedResponse = false;
         if (null != this.completedTs) {
             preparedResponse = true;
         }
         return preparedResponse;
+    };
+    TaskTicket.prototype.getIdFragment = function () {
+        return this.id.split("-")[0];
     };
     TaskTicket.prototype.toggleStar = function () {
         this.isStarred = !this.isStarred;
@@ -10569,47 +10619,6 @@ var TaskTicket = /** @class */ (function () {
         this.delegation = delegation;
         LHSMenuController.refreshMainMenu();
         LHSMenuController.saveDataAndRefreshMenu();
-    };
-    TaskTicket.prototype.addCaseNote = function (title) {
-        var cn = new CaseNote(title);
-        cn.createTs = new Date();
-        cn.id = MyUtilities.generateUUID();
-        this.caseNotes.push(cn);
-        LHSMenuController.saveDataAndRefreshMenu();
-    };
-    TaskTicket.prototype.determineCategory = function () {
-        var preparedResponse = TaskTicketCategory.ASSORTED;
-        // figure out if NEGLECTED
-        var ticketAge = MyUtilities.daysBetween(this.createTs, new Date());
-        if (ticketAge > 3) {
-            preparedResponse = TaskTicketCategory.NEGLECTED;
-        }
-        // figure out if urgent
-        if (this.dueDate) {
-            if (MyUtilities.isSameDay(new Date(), this.dueDate)) {
-                preparedResponse = TaskTicketCategory.DUE_TODAY;
-            }
-            else {
-                var daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
-                // console.log("daysLeft " + this.id + " = " + daysLeft);
-                if (daysLeft < 0) {
-                    preparedResponse = TaskTicketCategory.OVERDUE;
-                }
-                else if (daysLeft <= 1) {
-                    preparedResponse = TaskTicketCategory.DUE_TOMORROW;
-                }
-                else if (daysLeft < 5) {
-                    preparedResponse = TaskTicketCategory.DUE_SOON;
-                }
-            }
-        }
-        // figure out if done before today
-        if (this.completedTs) {
-            if (MyUtilities.isBeforeToday(this.completedTs)) {
-                preparedResponse = TaskTicketCategory.DONE_BEFORE_TODAY;
-            }
-        }
-        return preparedResponse;
     };
     return TaskTicket;
 }());
@@ -10881,7 +10890,9 @@ var LHSMenuController = /** @class */ (function () {
                 }
                 var preparedHTML = ""
                     + "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
-                    + "<span>" + item.title + "</span>"
+                    + "<span>"
+                    + "<span class='LeftSideMenuIdFragment'>" + item.getIdFragment() + "</span> &nbsp;"
+                    + item.title + "</span>"
                     + "<div class='is-pulled-right'>" + badges + "</div>"
                     + "</a>";
                 $("#MainMenu_" + destinationDom).append(preparedHTML);

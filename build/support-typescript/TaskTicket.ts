@@ -19,6 +19,52 @@ class TaskTicket {
 		this.title = title;
 		this.createTs = new Date();
 	}
+	
+	public addCaseNote(title: string) {
+		let cn = new CaseNote(title);
+		cn.createTs = new Date();
+		cn.id = MyUtilities.generateUUID();
+	
+		this.caseNotes.push(cn);
+	
+		LHSMenuController.saveDataAndRefreshMenu();
+	}
+	
+	public determineCategory(): TaskTicketCategory {
+		let preparedResponse = TaskTicketCategory.ASSORTED;
+	
+		// figure out if NEGLECTED
+		let ticketAge = MyUtilities.daysBetween(this.createTs, new Date());
+		if (ticketAge > 3) {
+			preparedResponse = TaskTicketCategory.NEGLECTED;
+		}
+	
+		// figure out if urgent
+		if (this.dueDate) {
+			if (MyUtilities.isSameDay(new Date(), this.dueDate)) {
+				preparedResponse = TaskTicketCategory.DUE_TODAY;
+			} else {
+				let daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
+				// console.log("daysLeft " + this.id + " = " + daysLeft);
+				if (daysLeft < 0) {
+					preparedResponse = TaskTicketCategory.OVERDUE;
+				} else if (daysLeft <= 1) {
+					preparedResponse = TaskTicketCategory.DUE_TOMORROW;
+				} else if (daysLeft < 5) {
+					preparedResponse = TaskTicketCategory.DUE_SOON;
+				}
+			}
+		}
+	
+		// figure out if done before today
+		if (this.completedTs) {
+			if (MyUtilities.isBeforeToday(this.completedTs)) {
+				preparedResponse = TaskTicketCategory.DONE_BEFORE_TODAY;
+			}
+		}
+	
+		return preparedResponse;
+	}
 
 	public isCompleted(): boolean {
 		let preparedResponse = false;
@@ -28,6 +74,10 @@ class TaskTicket {
 		}
 
 		return preparedResponse;
+	}
+	
+	public getIdFragment(): string {
+		return this.id.split("-")[0];
 	}
 
 	public toggleStar() {
@@ -84,51 +134,5 @@ class TaskTicket {
 		LHSMenuController.refreshMainMenu();
 
 		LHSMenuController.saveDataAndRefreshMenu();
-	}
-
-	public addCaseNote(title: string) {
-		let cn = new CaseNote(title);
-		cn.createTs = new Date();
-		cn.id = MyUtilities.generateUUID();
-
-		this.caseNotes.push(cn);
-
-		LHSMenuController.saveDataAndRefreshMenu();
-	}
-
-	public determineCategory(): TaskTicketCategory {
-		let preparedResponse = TaskTicketCategory.ASSORTED;
-
-		// figure out if NEGLECTED
-		let ticketAge = MyUtilities.daysBetween(this.createTs, new Date());
-		if (ticketAge > 3) {
-			preparedResponse = TaskTicketCategory.NEGLECTED;
-		}
-
-		// figure out if urgent
-		if (this.dueDate) {
-			if (MyUtilities.isSameDay(new Date(), this.dueDate)) {
-				preparedResponse = TaskTicketCategory.DUE_TODAY;
-			} else {
-				let daysLeft = MyUtilities.daysBetween(new Date(), this.dueDate);
-				// console.log("daysLeft " + this.id + " = " + daysLeft);
-				if (daysLeft < 0) {
-					preparedResponse = TaskTicketCategory.OVERDUE;
-				} else if (daysLeft <= 1) {
-					preparedResponse = TaskTicketCategory.DUE_TOMORROW;
-				} else if (daysLeft < 5) {
-					preparedResponse = TaskTicketCategory.DUE_SOON;
-				}
-			}
-		}
-
-		// figure out if done before today
-		if (this.completedTs) {
-			if (MyUtilities.isBeforeToday(this.completedTs)) {
-				preparedResponse = TaskTicketCategory.DONE_BEFORE_TODAY;
-			}
-		}
-
-		return preparedResponse;
 	}
 }

@@ -56,7 +56,9 @@ class LHSMenuController {
 
 				let preparedHTML = ""
 					+ "<a style='display: none;' class='" + itemClasses + "' id='" + MENU_ITEM_PREFIX + item.id + "'>"
-					+ "<span>" + item.title + "</span>"
+					+ "<span>"
+					+ "<span class='LeftSideMenuIdFragment'>" + item.getIdFragment() + "</span> &nbsp;"
+					+ item.title + "</span>"
 					+ "<div class='is-pulled-right'>" + badges + "</div>"
 					+ "</a>";
 
