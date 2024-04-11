@@ -39,10 +39,10 @@
 	font-size: 10pt;
 }
 
-.TTMenuItem.is-completed,
-.TTMenuItem.is-completed:hover:not(.is-active) {
+.is-completed .TTMenuItemTableFragment,
+.is-completed .TTMenuItemTableFragment:hover:not(.is-active) {
 	color: lightgray;
-	text-decoration: line-through;
+	text-decoration-line: line-through;
 }
 
 .is-flagged-menu-item,
