@@ -311,7 +311,7 @@ input,
 optgroup,
 select,
 textarea {
-  font-family: "Lucida Grande", sans-serif; }
+  font-family: "Luxi Sans", "Lucida Grande", sans-serif; }
 
 code,
 pre {
@@ -6975,13 +6975,13 @@ a.has-text-danger-dark:hover, a.has-text-danger-dark:focus {
   font-weight: 700 !important; }
 
 .is-family-primary {
-  font-family: "Lucida Grande", sans-serif !important; }
+  font-family: "Luxi Sans", "Lucida Grande", sans-serif !important; }
 
 .is-family-secondary {
-  font-family: "Lucida Grande", sans-serif !important; }
+  font-family: "Luxi Sans", "Lucida Grande", sans-serif !important; }
 
 .is-family-sans-serif {
-  font-family: "Lucida Grande", sans-serif !important; }
+  font-family: "Luxi Sans", "Lucida Grande", sans-serif !important; }
 
 .is-family-monospace {
   font-family: "Monaco", monospace !important; }
@@ -8193,6 +8193,7 @@ var DataHelper = /** @class */ (function () {
             }
             DataHelper.globalItems[tt.id] = tt;
         });
+        LHSMenuController.refreshMainMenu();
     };
     DataHelper.retrieveItemsFromLocalStorage = function () {
         try {
@@ -8203,6 +8204,24 @@ var DataHelper = /** @class */ (function () {
             // saved data has been corrupted, so reset it
             localStorage.setItem("wang.blair.ticketingtasks", JSON.stringify({}));
         }
+    };
+    DataHelper.retrieveItemsFromUploadedJSONFile = function (uploadedJSONTextString) {
+        try {
+            var jsonOutput = JSON.parse(uploadedJSONTextString);
+            DataHelper.processParsedJSON(jsonOutput);
+            // Needed here but not retrieveItemsFromLocalStorage()
+            // Since retrieveItemsFromLocalStorage() already read it from local storage so why would you send it back right away lol
+            DataHelper.saveItemsToLocalStorage();
+        }
+        catch (exception) {
+            console.log("DataHelper.retrieveItemsFromUploadedJSONFile(...): Sorry it didn't work!");
+            // TODO: display error to user
+        }
+    };
+    DataHelper.dangerousDeleteAllItems = function () {
+        Main.foreachHelper(DataHelper.globalItems, function (key, item) {
+            DataHelper.removeItem(item.id);
+        });
     };
     DataHelper.globalItems = {};
     return DataHelper;
@@ -8578,7 +8597,6 @@ var Main = /** @class */ (function () {
     }
     Main.main = function () {
         DataHelper.retrieveItemsFromLocalStorage();
-        LHSMenuController.refreshMainMenu();
         ToolbarController.initialise();
     };
     Main.foreachHelper = function (input_dictionary, callback_function) {
@@ -8615,11 +8633,89 @@ function vanillaJS_saveToJSONFile(nativeObject) {
 	saveAs(blob, filename);
 }
 
+function vanillaJS_loadUploadedSONFile() {
+	var file = document.getElementById("TTUploadFileInput").files[0];
+	var reader = new FileReader();
+	reader.addEventListener('load', (event) => {
+		DataHelper.retrieveItemsFromUploadedJSONFile(event.target.result);
+	});
+	reader.readAsText(file, "UTF-8");
+}
+
+// Adapted from https://bulma.io/documentation/components/modal/
+document.addEventListener('DOMContentLoaded', () => {
+	// Functions to open and close a modal
+	function openModal($el) {
+	  $el.classList.add('is-active');
+	}
+  
+	function closeModal($el) {
+	  $el.classList.remove('is-active');
+	}
+  
+	function closeAllModals() {
+	  (document.querySelectorAll('.modal') || []).forEach(($modal) => {
+		closeModal($modal);
+	  });
+	}
+  
+	// Add a click event on buttons to open a specific modal
+	(document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+	  const modal = $trigger.dataset.target;
+	  const $target = document.getElementById(modal);
+  
+	  $trigger.addEventListener('click', () => {
+		openModal($target);
+	  });
+	});
+  
+	// Add a click event on various child elements to close the parent modal
+	(document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
+	  const $target = $close.closest('.modal');
+  
+	  $close.addEventListener('click', () => {
+		closeModal($target);
+	  });
+	});
+  
+	// Add a keyboard event to close all modals
+	document.addEventListener('keydown', (event) => {
+	  if(event.key === "Escape") {
+		closeAllModals();
+	  }
+	});
+  });
 </script>
 </head>
 
 <body onload="bodyDidLoad()">
 	<div id="MainContainer">
+		<div id="TTImportFileModal" class="modal">
+			<div class="modal-background"></div>
+		  
+			<div class="modal-card">
+				<header class="modal-card-head">
+					<p class="modal-card-title">Import JSON file into Ticketingtasks</p>
+					<button class="delete" aria-label="close"></button>
+				</header>
+				<section class="modal-card-body">
+					<p>
+						<label for="TTUploadFileInput">Choose your JSON file:</label>
+						<br />
+						<br />
+						<input type="file" id="TTUploadFileInput" accept=".json" />
+					</p>
+				</section>
+				<footer class="modal-card-foot">
+					<div class="buttons">
+					<button class="button is-success" onclick="vanillaJS_loadUploadedSONFile()">Import!</button>
+					<button class="button">Cancel</button>
+					</div>
+				</footer>
+			</div>
+		  
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
 		<div id="DocumentHeading" class="level">
 			<div class="level-left">
 				<div>
@@ -8630,6 +8726,9 @@ function vanillaJS_saveToJSONFile(nativeObject) {
 			</div>
 			<div class="level-right">
 				<div>
+					<button class="button is-small is-success js-modal-trigger" data-target="TTImportFileModal">
+						Import
+					</button>
 					<button class="button is-small is-success" onclick="vanillaJS_saveToJSONFile(DataHelper.globalItems)">Export</button>
 					<button class="button is-small is-danger" onclick="vanillaJS_exportAndDeleteCompletedTickets()">Dump Done Ones</button>
 				</div>

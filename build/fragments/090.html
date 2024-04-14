@@ -2,6 +2,32 @@
 
 <body onload="bodyDidLoad()">
 	<div id="MainContainer">
+		<div id="TTImportFileModal" class="modal">
+			<div class="modal-background"></div>
+		  
+			<div class="modal-card">
+				<header class="modal-card-head">
+					<p class="modal-card-title">Import JSON file into Ticketingtasks</p>
+					<button class="delete" aria-label="close"></button>
+				</header>
+				<section class="modal-card-body">
+					<p>
+						<label for="TTUploadFileInput">Choose your JSON file:</label>
+						<br />
+						<br />
+						<input type="file" id="TTUploadFileInput" accept=".json" />
+					</p>
+				</section>
+				<footer class="modal-card-foot">
+					<div class="buttons">
+					<button class="button is-success" onclick="vanillaJS_loadUploadedSONFile()">Import!</button>
+					<button class="button">Cancel</button>
+					</div>
+				</footer>
+			</div>
+		  
+			<button class="modal-close is-large" aria-label="close"></button>
+		</div>
 		<div id="DocumentHeading" class="level">
 			<div class="level-left">
 				<div>
@@ -12,6 +38,9 @@
 			</div>
 			<div class="level-right">
 				<div>
+					<button class="button is-small is-success js-modal-trigger" data-target="TTImportFileModal">
+						Import
+					</button>
 					<button class="button is-small is-success" onclick="vanillaJS_saveToJSONFile(DataHelper.globalItems)">Export</button>
 					<button class="button is-small is-danger" onclick="vanillaJS_exportAndDeleteCompletedTickets()">Dump Done Ones</button>
 				</div>

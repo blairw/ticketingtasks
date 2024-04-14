@@ -1,7 +1,6 @@
 class Main {
 	public static main() {
 		DataHelper.retrieveItemsFromLocalStorage();
-		LHSMenuController.refreshMainMenu();
 		ToolbarController.initialise();
 	}
 	

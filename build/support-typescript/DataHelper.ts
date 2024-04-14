@@ -5,7 +5,7 @@ class DataHelper {
 	public static deleteAndReturnCompletedItems(): Array<TaskTicket> {
 		let completedItems: Array<TaskTicket> = [];
 
-		Main.foreachHelper(DataHelper.globalItems, function(key, item) {
+		Main.foreachHelper(DataHelper.globalItems, function(key, item: TaskTicket) {
 			if (item.isCompleted()) {
 				completedItems.push(item);
 				DataHelper.removeItem(item.id);
@@ -103,6 +103,8 @@ class DataHelper {
 
 			DataHelper.globalItems[tt.id] = tt;
 		});
+
+		LHSMenuController.refreshMainMenu();
 	}
 
 	public static retrieveItemsFromLocalStorage() {
@@ -116,5 +118,25 @@ class DataHelper {
 				JSON.stringify({})
 			);
 		}
+	}
+
+	public static retrieveItemsFromUploadedJSONFile(uploadedJSONTextString: string) {
+		try {
+			let jsonOutput: any = JSON.parse(uploadedJSONTextString);
+			DataHelper.processParsedJSON(jsonOutput);
+
+			// Needed here but not retrieveItemsFromLocalStorage()
+			// Since retrieveItemsFromLocalStorage() already read it from local storage so why would you send it back right away lol
+			DataHelper.saveItemsToLocalStorage();
+		} catch (exception) {
+			console.log("DataHelper.retrieveItemsFromUploadedJSONFile(...): Sorry it didn't work!");
+			// TODO: display error to user
+		}
+	}
+
+	public static dangerousDeleteAllItems() {
+		Main.foreachHelper(DataHelper.globalItems, function(key, item: TaskTicket) {
+			DataHelper.removeItem(item.id);
+		});
 	}
 }
