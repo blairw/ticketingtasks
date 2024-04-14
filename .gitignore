@@ -3,3 +3,4 @@ build/files-generated/main.css
 build/files-generated/main.js
 build/files-generated/main.ts
 .DS_Store
+.sass-cache

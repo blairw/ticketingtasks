@@ -7,10 +7,10 @@ function bodyDidLoad() {
 
 function vanillaJS_exportAndDeleteCompletedTickets() {
 	var nativeObject = DataHelper.deleteAndReturnCompletedItems();
-	vanillaJS_saveToYamlFile(nativeObject);
+	vanillaJS_saveToJSONFile(nativeObject);
 }
 
-function vanillaJS_saveToYamlFile(nativeObject) {
+function vanillaJS_saveToJSONFile(nativeObject) {
 	var jsonString = JSON.stringify(nativeObject);
 	var newDate = new Date();
 	var newDateString = newDate.toISOString();

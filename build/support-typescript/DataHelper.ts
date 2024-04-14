@@ -60,53 +60,55 @@ class DataHelper {
 		return tt;
 	}
 
+	public static processParsedJSON(parsedJSON: any) {
+		DataHelper.globalItems = {};
+
+		$.each(parsedJSON, function (index, value) {
+			let tt: TaskTicket = new TaskTicket(value["title"]);
+			tt.id = value["id"]
+			tt.createTs = new Date(value["createTs"]);
+			if (value["completedTs"]) {
+				tt.completedTs = new Date(value["completedTs"]);
+			}
+			if (value["dueDate"]) {
+				tt.dueDate = new Date(value["dueDate"]);
+			}
+			if (value["note"]) {
+				tt.note = value["note"];
+			}
+			if (value["externalId"]) {
+				tt.externalId = value["externalId"];
+			}
+			if (value["delegation"]) {
+				tt.delegation = value["delegation"];
+			}
+			if (value["isStarred"]) {
+				tt.isStarred = (value["isStarred"] == true);
+			}
+			if (value["isFlagged"]) {
+				tt.isFlagged = (value["isFlagged"] == true);
+			}
+			
+			if (value["caseNotes"]) {
+				$.each(value["caseNotes"], function(index, caseNote) {
+					if (caseNote) {
+						let cn = new CaseNote(caseNote['title']);
+						cn.id = caseNote['id'];
+						cn.createTs = new Date(caseNote['createTs']);
+
+						tt.caseNotes.push(cn);
+					}
+				});
+			}
+
+			DataHelper.globalItems[tt.id] = tt;
+		});
+	}
+
 	public static retrieveItemsFromLocalStorage() {
 		try {
-			let jsonOutput: any = JSON.parse(localStorage.getItem(
-				"wang.blair.ticketingtasks.items"
-			));
-
-			DataHelper.globalItems = {};
-			$.each(jsonOutput, function (index, value) {
-				let tt: TaskTicket = new TaskTicket(value["title"]);
-				tt.id = value["id"]
-				tt.createTs = new Date(value["createTs"]);
-				if (value["completedTs"]) {
-					tt.completedTs = new Date(value["completedTs"]);
-				}
-				if (value["dueDate"]) {
-					tt.dueDate = new Date(value["dueDate"]);
-				}
-				if (value["note"]) {
-					tt.note = value["note"];
-				}
-				if (value["externalId"]) {
-					tt.externalId = value["externalId"];
-				}
-				if (value["delegation"]) {
-					tt.delegation = value["delegation"];
-				}
-				if (value["isStarred"]) {
-					tt.isStarred = (value["isStarred"] == true);
-				}
-				if (value["isFlagged"]) {
-					tt.isFlagged = (value["isFlagged"] == true);
-				}
-				
-				if (value["caseNotes"]) {
-					$.each(value["caseNotes"], function(index, caseNote) {
-						if (caseNote) {
-							let cn = new CaseNote(caseNote['title']);
-							cn.id = caseNote['id'];
-							cn.createTs = new Date(caseNote['createTs']);
-	
-							tt.caseNotes.push(cn);
-						}
-					});
-				}
-
-				DataHelper.globalItems[tt.id] = tt;
-			});
+			let jsonOutput: any = JSON.parse(localStorage.getItem("wang.blair.ticketingtasks.items"));
+			DataHelper.processParsedJSON(jsonOutput);
 		} catch (exception) {
 			// saved data has been corrupted, so reset it
 			localStorage.setItem(
