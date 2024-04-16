@@ -6,7 +6,7 @@ Some functionalities are not yet implemented. I made this in a hurry because I n
 
 If you want to use this, just clone this repo and open `output/index.html` in your browser. That's it, no further installation necessary, this runs 100% in your browser and all data is managed by [Window.localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
 
-![docs/ticketingtasks.png](docs/ticketingtasks.png)
+![images/ticketingtasks.png](images/ticketingtasks.png)
 
 ## Technology stack
 
